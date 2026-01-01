@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alexander Blair Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Intro Screen -->
+    <div id="intro-screen">
+        <div id="intro-content">
+            <h1 id="portfolio-title">ALEXANDER BLAIR PORTFOLIO</h1>
+
+```
+        <div id="intro-text">
+            <p class="intro-line" data-delay="0.5">Not a jack of all trades, master of none.</p>
+            <p class="intro-line" data-delay="1.0">I get obsessed with understanding how things work,<br>go deep enough to produce real output,<br>and carry those skills forward into the next thing.</p>
+            <p class="intro-line" data-delay="1.6">Each medium isn't a phase—it's a layer.</p>
+            <p class="intro-line" data-delay="2.1">Most designers can't edit video.<br>Most editors can't build systems.<br>Most coders have no design taste.</p>
+            <p class="intro-line intro-final" data-delay="2.6">I do all three.</p>
+        </div>
+    </div>
+    
+    <!-- Door SVG that draws itself -->
+    <div id="door-container">
+        <svg id="door-svg" viewBox="0 0 200 350" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Door frame -->
+            <path class="door-path door-frame" d="M 20 10 L 180 10 L 180 340 L 20 340 Z" />
+            <!-- Door body -->
+            <path class="door-path door-body" d="M 30 20 L 170 20 L 170 330 L 30 330 Z" />
+            <!-- Top panel -->
+            <path class="door-path door-panel" d="M 45 40 L 155 40 L 155 140 L 45 140 Z" />
+            <!-- Bottom panel -->
+            <path class="door-path door-panel" d="M 45 160 L 155 160 L 155 310 L 45 310 Z" />
+            <!-- Door handle -->
+            <circle class="door-path door-handle" cx="145" cy="200" r="8" />
+        </svg>
+        <div id="door-prompt">
+            <span class="prompt-arrow">→</span>
+            <span class="prompt-text">ENTER</span>
+        </div>
+    </div>
+</div>
+
+<!-- Nav Bar (hidden initially) -->
+<nav id="main-nav">
+    <ul>
+        <li><a href="#marketing">Marketing</a></li>
+        <li><a href="#brand-design">Brand</a></li>
+        <li><a href="#music">Music</a></li>
+        <li><a href="#coding">Code</a></li>
+        <li><a href="#drawing">Drawing</a></li>
+        <li><a href="#digital-art">Digital Art</a></li>
+        <li><a href="#video">Video</a></li>
+    </ul>
+    <button id="day-night-toggle" aria-label="Toggle day/night mode">
+        <span class="toggle-icon sun">☀</span>
+        <span class="toggle-icon moon">☾</span>
+    </button>
+</nav>
+
+<!-- Desk Scene -->
+<div id="desk-scene">
+    <!-- Background layer (moves least) -->
+    <div class="parallax-layer" data-depth="0.2">
+        <div id="background">
+            <div id="wall"></div>
+            <div id="window">
+                <div id="window-frame"></div>
+                <div id="window-sky"></div>
+                <div id="rain-container"></div>
+            </div>
+            <div id="poster"></div>
+            <div id="shelf"></div>
+        </div>
+    </div>
+
+    <!-- Midground layer (moves medium) -->
+    <div class="parallax-layer" data-depth="0.5">
+        <div id="midground">
+            <div id="desk-surface"></div>
+            
+            <!-- Clickable objects -->
+            <div class="desk-object" id="obj-monitor" data-section="video">
+                <div class="object-glow"></div>
+                <div class="object-shape monitor">
+                    <div class="monitor-screen"></div>
+                </div>
+                <span class="object-label">Video</span>
+            </div>
+
+            <div class="desk-object" id="obj-laptop" data-section="coding">
+                <div class="object-glow"></div>
+                <div class="object-shape laptop">
+                    <div class="laptop-screen"></div>
+                </div>
+                <span class="object-label">Code</span>
+            </div>
+
+            <div class="desk-object" id="obj-headphones" data-section="music">
+                <div class="object-glow"></div>
+                <div class="object-shape headphones"></div>
+                <span class="object-label">Music</span>
+            </div>
+
+            <div class="desk-object" id="obj-brandbook" data-section="brand-design">
+                <div class="object-glow"></div>
+                <div class="object-shape brandbook">
+                    <div class="swatch s1"></div>
+                    <div class="swatch s2"></div>
+                    <div class="swatch s3"></div>
+                </div>
+                <span class="object-label">Brand</span>
+            </div>
+
+            <div class="desk-object" id="obj-notebook" data-section="marketing">
+                <div class="object-glow"></div>
+                <div class="object-shape notebook">
+                    <div class="sticky-note n1"></div>
+                    <div class="sticky-note n2"></div>
+                </div>
+                <span class="object-label">Marketing</span>
+            </div>
+
+            <div class="desk-object" id="obj-sketchbook" data-section="drawing">
+                <div class="object-glow"></div>
+                <div class="object-shape sketchbook">
+                    <div class="pencil"></div>
+                </div>
+                <span class="object-label">Drawing</span>
+            </div>
+
+            <div class="desk-object" id="obj-tablet" data-section="digital-art">
+                <div class="object-glow"></div>
+                <div class="object-shape tablet">
+                    <div class="stylus"></div>
+                </div>
+                <span class="object-label">Digital Art</span>
+            </div>
+
+            <!-- Ambient objects (not clickable) -->
+            <div class="ambient-object" id="obj-mug">
+                <div class="mug-body"></div>
+                <div class="steam">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Foreground layer (moves most) -->
+    <div class="parallax-layer" data-depth="1.0">
+        <div id="foreground">
+            <div class="ambient-object" id="obj-plant">
+                <div class="pot"></div>
+                <div class="plant-leaves">
+                    <div class="leaf l1"></div>
+                    <div class="leaf l2"></div>
+                    <div class="leaf l3"></div>
+                </div>
+            </div>
+
+            <div class="ambient-object" id="obj-lamp">
+                <div class="lamp-base"></div>
+                <div class="lamp-arm"></div>
+                <div class="lamp-head"></div>
+                <div class="lamp-glow"></div>
+            </div>
+
+            <div class="ambient-object" id="obj-dog">
+                <div class="dog-body"></div>
+                <div class="dog-head"></div>
+                <div class="dog-tail"></div>
+                <span class="dog-tooltip">Good boy! 🐕</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Section overlays (shown when clicking objects) -->
+<div id="section-overlay" class="hidden">
+    <button id="back-to-desk" aria-label="Back to desk">← Back to Desk</button>
+    <div id="section-content">
+        <!-- Content loaded dynamically -->
+    </div>
+</div>
+
+<!-- GSAP CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="script.js"></script>
+```
+
+</body>
+</html>
