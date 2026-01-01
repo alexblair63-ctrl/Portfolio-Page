@@ -31,7 +31,7 @@ this.doorSvg = document.getElementById(‘door-svg’);
 this.deskScene = document.getElementById(‘desk-scene’);
 this.mainNav = document.getElementById(‘main-nav’);
 
-```
+
     this.playIntro();
     this.setupDoorClick();
 },
@@ -163,7 +163,6 @@ enterDesk() {
         }, 1.2
     );
 }
-```
 
 };
 
@@ -179,8 +178,6 @@ this.deskScene = document.getElementById(‘desk-scene’);
 this.centerX = window.innerWidth / 2;
 this.centerY = window.innerHeight / 2;
 this.isEnabled = true;
-
-```
     this.setupListeners();
 },
 
@@ -225,7 +222,6 @@ disable() {
 enable() {
     this.isEnabled = true;
 }
-```
 
 };
 
@@ -243,7 +239,6 @@ this.backButton = document.getElementById(‘back-to-desk’);
 this.deskScene = document.getElementById(‘desk-scene’);
 this.mainNav = document.getElementById(‘main-nav’);
 
-```
     this.setupObjectClicks();
     this.setupBackButton();
     this.setupNavLinks();
@@ -475,7 +470,6 @@ setupDogInteraction() {
         });
     });
 }
-```
 
 };
 
@@ -489,7 +483,6 @@ init() {
 this.toggle = document.getElementById(‘day-night-toggle’);
 this.isNight = false;
 
-```
     this.setupToggle();
 },
 
@@ -547,7 +540,6 @@ switchTheme() {
         }, 0);
     }
 }
-```
 
 };
 
@@ -563,7 +555,6 @@ this.isRaining = false;
 this.raindrops = [];
 },
 
-```
 start() {
     if (this.isRaining) return;
     this.isRaining = true;
@@ -600,7 +591,7 @@ stop() {
     
     this.raindrops = [];
 }
-```
+
 
 };
 
