@@ -13,7 +13,7 @@
     --accent-cool: #7c9885;
     --accent-pink: #d4a5a5;
     --text-primary: #f5f0e8;
-    --text-secondary: #b8b0c8;
+    --text-secondary: #e5dff0;
     --window-sky: linear-gradient(180deg, #87CEEB 0%, #7dd3c0 100%);
     --lamp-glow: rgba(125, 211, 192, 0);
     --shadow-color: rgba(0, 0, 0, 0.3);
@@ -186,7 +186,7 @@ body.desk-active {
 .intro-line {
     font-size: clamp(14px, 2vw, 20px);
     line-height: 1.8;
-    color: var(--text-primary);
+    color: var(--text-secondary);
     opacity: 0;
     margin-bottom: 24px;
 }
