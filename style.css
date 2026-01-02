@@ -204,6 +204,7 @@ body.desk-active {
     font-weight: 700;
     color: var(--accent-warm);
     margin-top: 16px;
+    opacity: 0;
 }
 
 /* Door Container (hidden initially, shown after title click) */

@@ -280,6 +280,29 @@ showDoorAndContent() {
         duration: 0.5
     }, 0.3);
 
+    // Animate intro lines appearing
+    this.introLines.forEach((line, index) => {
+        const delay = parseFloat(line.dataset.delay) || 0;
+        tl.to(line, {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: 'power2.out'
+        }, delay);
+    });
+
+    // Animate intro-final text
+    const introFinal = document.querySelector('.intro-final');
+    if (introFinal) {
+        const delay = parseFloat(introFinal.dataset.delay) || 2.6;
+        tl.to(introFinal, {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: 'power2.out'
+        }, delay);
+    }
+
     // Animate door drawing
     this.animateDoorDrawing(tl, 0.5);
 
