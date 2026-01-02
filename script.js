@@ -10,21 +10,21 @@ const createDebugPanel = () => {
     panel.style.cssText = 'position:fixed;top:0;left:0;right:0;background:rgba(0,0,0,0.9);color:#0f0;padding:10px;font-size:10px;z-index:10000;max-height:150px;overflow-y:auto;font-family:monospace;pointer-events:auto;display:none;transform:translateY(-100%);transition:transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;opacity:0;';
     document.body.appendChild(panel);
 
-    // Add toggle button with bug emoji
+    // Add toggle button with ladybug emoji
     const toggleBtn = document.createElement('button');
     toggleBtn.id = 'debug-toggle';
-    toggleBtn.textContent = '🐛';
-    toggleBtn.style.cssText = 'position:fixed;top:10px;right:10px;z-index:10001;background:rgba(15,255,0,0.2);color:#0f0;border:2px solid #0f0;padding:8px 12px;border-radius:50%;font-size:20px;cursor:pointer;backdrop-filter:blur(10px);transition:all 0.3s ease;';
+    toggleBtn.textContent = '🐞';
+    toggleBtn.style.cssText = 'position:fixed;top:10px;right:10px;z-index:10001;background:rgba(255,50,50,0.2);color:#ff3232;border:2px solid #ff3232;padding:8px 12px;border-radius:50%;font-size:20px;cursor:pointer;backdrop-filter:blur(10px);transition:all 0.3s ease;';
     document.body.appendChild(toggleBtn);
 
     // Hover effect for button
     toggleBtn.addEventListener('mouseenter', () => {
         toggleBtn.style.transform = 'scale(1.1) rotate(10deg)';
-        toggleBtn.style.background = 'rgba(15,255,0,0.3)';
+        toggleBtn.style.background = 'rgba(255,50,50,0.3)';
     });
     toggleBtn.addEventListener('mouseleave', () => {
         toggleBtn.style.transform = 'scale(1) rotate(0deg)';
-        toggleBtn.style.background = 'rgba(15,255,0,0.2)';
+        toggleBtn.style.background = 'rgba(255,50,50,0.2)';
     });
 
     let isVisible = false;
@@ -55,7 +55,16 @@ const debugLog = (msg) => {
     console.log(msg);
     const panel = document.getElementById('debug-panel');
     if (panel) {
-        panel.innerHTML += msg + '<br>';
+        // Add ASCII art header on first message
+        if (panel.innerHTML === '') {
+            const header = `
+╔═══════════════════════════════════════╗
+║  🐞 LADYBUG DEBUG CONSOLE 🐞         ║
+║  /'o.o'\\  Squashing bugs cutely...   ║
+╚═══════════════════════════════════════╝<br>`;
+            panel.innerHTML = header;
+        }
+        panel.innerHTML += '🐞 ' + msg + '<br>';
         panel.scrollTop = panel.scrollHeight;
     }
 };
