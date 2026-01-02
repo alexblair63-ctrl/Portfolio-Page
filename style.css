@@ -228,7 +228,7 @@ body.desk-active {
 }
 
 #door-svg {
-    width: clamp(120px, 15vw, 200px);
+    width: clamp(108px, 13.5vw, 180px);
     height: auto;
     cursor: pointer;
     filter: drop-shadow(0 0 20px rgba(122, 114, 104, 0));
@@ -1312,7 +1312,7 @@ body.night-mode #obj-dog {
     }
 
     #door-svg {
-        width: clamp(100px, 20vw, 150px);
+        width: clamp(90px, 18vw, 135px);
         opacity: 0.6;
     }
 
