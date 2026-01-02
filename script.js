@@ -480,35 +480,56 @@ enableDeviceOrientation() {
         const beta = e.beta || 0;   // Range: -180 to 180
         const gamma = e.gamma || 0;  // Range: -90 to 90
 
-        // Normalize values to -1 to 1 range
-        const tiltX = Math.max(-1, Math.min(1, gamma / 30));
-        const tiltY = Math.max(-1, Math.min(1, (beta - 45) / 30)); // Offset by 45 for natural holding
+        // Normalize values to -1 to 1 range with wider sensitivity (divide by 20 instead of 30)
+        const tiltX = Math.max(-1, Math.min(1, gamma / 20));
+        const tiltY = Math.max(-1, Math.min(1, (beta - 45) / 20)); // Offset by 45 for natural holding
 
         this.applyIntroParallax(tiltX, tiltY);
     });
 },
 
 applyIntroParallax(deltaX, deltaY) {
-    // Text moves more (appears closer) - depth factor 1.5
-    const textMoveX = deltaX * 20;
-    const textMoveY = deltaY * 20;
+    // DRAMATIC parallax with 3D transforms and rotation
 
-    // Door moves less (appears further back) - depth factor 0.3
-    const doorMoveX = deltaX * 6;
-    const doorMoveY = deltaY * 6;
+    // Text moves MUCH more (appears very close) - increased from 20px to 120px
+    const textMoveX = deltaX * 120;
+    const textMoveY = deltaY * 120;
+    const textRotateX = -deltaY * 15; // Rotate on X axis based on vertical tilt
+    const textRotateY = deltaX * 15;  // Rotate on Y axis based on horizontal tilt
+    const textScale = 1 + (Math.abs(deltaX) + Math.abs(deltaY)) * 0.05; // Subtle scale up on tilt
+
+    // Door moves moderately (middle depth) - increased from 6px to 40px
+    const doorMoveX = deltaX * 40;
+    const doorMoveY = deltaY * 40;
+    const doorRotateX = -deltaY * 8;
+    const doorRotateY = deltaX * 8;
+
+    // Add dramatic shadow that shifts with tilt
+    const shadowX = deltaX * 30;
+    const shadowY = deltaY * 30;
+    const shadowBlur = 40 + Math.abs(deltaX * 20) + Math.abs(deltaY * 20);
 
     gsap.to(this.introText, {
         x: textMoveX,
         y: textMoveY,
-        duration: 0.5,
-        ease: 'power2.out'
+        rotationX: textRotateX,
+        rotationY: textRotateY,
+        scale: textScale,
+        transformPerspective: 1000,
+        filter: `drop-shadow(${shadowX}px ${shadowY}px ${shadowBlur}px rgba(0, 0, 0, 0.4))`,
+        duration: 0.2, // Much faster for instant response
+        ease: 'power1.out'
     });
 
     gsap.to([this.doorContainer, this.portfolioTitle], {
         x: doorMoveX,
         y: doorMoveY,
-        duration: 0.5,
-        ease: 'power2.out'
+        rotationX: doorRotateX,
+        rotationY: doorRotateY,
+        transformPerspective: 1000,
+        filter: `drop-shadow(${shadowX * 0.5}px ${shadowY * 0.5}px ${shadowBlur * 0.7}px rgba(0, 0, 0, 0.3))`,
+        duration: 0.2,
+        ease: 'power1.out'
     });
 },
 
@@ -609,26 +630,146 @@ Mouse movement creates depth
 
 const ParallaxEffect = {
 init() {
-this.layers = document.querySelectorAll('.parallax-layer');
-this.deskScene = document.getElementById('desk-scene');
-this.centerX = window.innerWidth / 2;
-this.centerY = window.innerHeight / 2;
-this.isEnabled = false; // Disabled for scroll-linked navigation
-this.scrollOffset = 0;
-    // Parallax disabled for new scroll-linked design
-    // this.setupListeners();
+    this.layers = document.querySelectorAll('.parallax-layer');
+    this.deskScene = document.getElementById('desk-scene');
+    this.deskObjects = document.querySelectorAll('.desk-object');
+    this.centerX = window.innerWidth / 2;
+    this.centerY = window.innerHeight / 2;
+    this.isEnabled = true; // RE-ENABLED for device orientation
+    this.scrollOffset = 0;
+    this.currentTiltX = 0;
+    this.currentTiltY = 0;
+
+    this.setupListeners();
 },
 
 setupListeners() {
-    // Disabled for scroll-linked navigation
+    debugLog('Setting up desk parallax listeners...');
+
+    // Device orientation for mobile
+    if (isMobile()) {
+        this.requestOrientationPermission();
+    }
+
+    // Mouse movement fallback for desktop
+    if (!isMobile()) {
+        document.addEventListener('mousemove', (e) => {
+            if (!this.deskScene.classList.contains('visible')) return;
+            this.handleMove(e.clientX, e.clientY);
+        });
+    }
 },
 
-handleScroll() {
-    // Disabled for scroll-linked navigation
+requestOrientationPermission() {
+    const request = async () => {
+        if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+            try {
+                const permission = await DeviceOrientationEvent.requestPermission();
+                if (permission === 'granted') {
+                    this.enableDeviceOrientation();
+                }
+            } catch (error) {
+                debugLog('Desk orientation permission error: ' + error.message);
+            }
+        } else if (window.DeviceOrientationEvent) {
+            this.enableDeviceOrientation();
+        }
+    };
+
+    // Request on first interaction with desk scene
+    let permissionRequested = false;
+    document.addEventListener('touchstart', () => {
+        if (!permissionRequested && this.deskScene.classList.contains('visible')) {
+            permissionRequested = true;
+            request();
+        }
+    }, { once: true });
+},
+
+enableDeviceOrientation() {
+    debugLog('Enabling desk orientation parallax');
+    window.addEventListener('deviceorientation', (e) => {
+        if (!this.deskScene.classList.contains('visible')) return;
+
+        const beta = e.beta || 0;
+        const gamma = e.gamma || 0;
+
+        // More sensitive range for desk scene (divide by 15 instead of 20)
+        this.currentTiltX = Math.max(-1, Math.min(1, gamma / 15));
+        this.currentTiltY = Math.max(-1, Math.min(1, (beta - 45) / 15));
+
+        this.applyParallax(this.currentTiltX, this.currentTiltY);
+    });
 },
 
 handleMove(x, y) {
-    // Disabled for scroll-linked navigation
+    if (!this.isEnabled) return;
+
+    // Normalize mouse position to -1 to 1 range
+    const deltaX = (x - this.centerX) / this.centerX;
+    const deltaY = (y - this.centerY) / this.centerY;
+
+    this.applyParallax(deltaX, deltaY);
+},
+
+applyParallax(deltaX, deltaY) {
+    // Apply parallax to layers with depth
+    this.layers.forEach(layer => {
+        const depth = parseFloat(layer.getAttribute('data-depth')) || 0;
+        const moveX = deltaX * depth * 150; // Increased from implicit smaller values
+        const moveY = deltaY * depth * 150;
+        const rotateX = -deltaY * depth * 10;
+        const rotateY = deltaX * depth * 10;
+
+        gsap.to(layer, {
+            x: moveX,
+            y: moveY,
+            rotationX: rotateX,
+            rotationY: rotateY,
+            transformPerspective: 1500,
+            duration: 0.3,
+            ease: 'power1.out'
+        });
+    });
+
+    // Apply individual parallax to desk objects with rotation
+    this.deskObjects.forEach(obj => {
+        // Each object gets unique depth based on visual position
+        const rect = obj.getBoundingClientRect();
+        const objCenterX = rect.left + rect.width / 2;
+        const objCenterY = rect.top + rect.height / 2;
+
+        // Distance from screen center affects parallax intensity
+        const distanceFromCenter = Math.sqrt(
+            Math.pow((objCenterX - this.centerX) / this.centerX, 2) +
+            Math.pow((objCenterY - this.centerY) / this.centerY, 2)
+        );
+
+        const individualDepth = 0.3 + distanceFromCenter * 0.4; // 0.3 to 0.7 range
+
+        const objMoveX = deltaX * individualDepth * 80;
+        const objMoveY = deltaY * individualDepth * 80;
+        const objRotateX = -deltaY * 5;
+        const objRotateY = deltaX * 5;
+        const objRotateZ = (deltaX * 2) + (deltaY * 2); // Slight roll effect
+
+        // Shadow that moves opposite to light source
+        const shadowX = -deltaX * 20;
+        const shadowY = -deltaY * 20;
+        const shadowBlur = 30 + Math.abs(deltaX * 10) + Math.abs(deltaY * 10);
+
+        gsap.to(obj, {
+            x: objMoveX,
+            y: objMoveY,
+            rotationX: objRotateX,
+            rotationY: objRotateY,
+            rotationZ: objRotateZ,
+            transformPerspective: 1200,
+            filter: `drop-shadow(${shadowX}px ${shadowY}px ${shadowBlur}px rgba(0, 0, 0, 0.3))`,
+            duration: 0.25,
+            ease: 'power1.out'
+        });
+    });
 },
 
 disable() {
