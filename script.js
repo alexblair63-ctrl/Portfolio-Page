@@ -3,18 +3,38 @@ ALEXANDER BLAIR PORTFOLIO
 JavaScript - GSAP Animations & Interactions
 ============================================ */
 
+// Create visible debug log on mobile
+const createDebugPanel = () => {
+    const panel = document.createElement('div');
+    panel.id = 'debug-panel';
+    panel.style.cssText = 'position:fixed;top:0;left:0;right:0;background:rgba(0,0,0,0.9);color:#0f0;padding:10px;font-size:10px;z-index:10000;max-height:150px;overflow-y:auto;font-family:monospace;';
+    document.body.appendChild(panel);
+    return panel;
+};
+
+const debugLog = (msg) => {
+    console.log(msg);
+    const panel = document.getElementById('debug-panel');
+    if (panel) {
+        panel.innerHTML += msg + '<br>';
+        panel.scrollTop = panel.scrollHeight;
+    }
+};
+
 // Wait for DOM to be ready
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM loaded, initializing portfolio...');
+    const debugPanel = createDebugPanel();
+    debugLog('DOM loaded, initializing portfolio...');
 
     // Check if GSAP is loaded
     if (typeof gsap === 'undefined') {
         console.error('GSAP not loaded! Animations will not work.');
+        debugLog('ERROR: GSAP not loaded!');
         alert('Error: Animation library failed to load. Please refresh the page.');
         return;
     }
 
-    console.log('GSAP loaded successfully');
+    debugLog('GSAP loaded successfully (v' + gsap.version + ')');
 
     // Initialize all modules
     try {
@@ -24,9 +44,10 @@ document.addEventListener('DOMContentLoaded', () => {
         DayNightToggle.init();
         Navigation.init();
         RainEffect.init();
-        console.log('All modules initialized successfully');
+        debugLog('All modules initialized successfully');
     } catch (error) {
         console.error('Initialization error:', error);
+        debugLog('ERROR: ' + error.message);
         alert('Error initializing portfolio: ' + error.message);
     }
 });
@@ -38,7 +59,7 @@ Door drawing + text fade-ins
 
 const IntroSequence = {
 init() {
-    console.log('Initializing IntroSequence...');
+    debugLog('Initializing IntroSequence...');
     this.introScreen = document.getElementById('intro-screen');
     this.portfolioTitle = document.getElementById('portfolio-title');
     this.introLines = document.querySelectorAll('.intro-line');
@@ -49,25 +70,17 @@ init() {
     this.deskScene = document.getElementById('desk-scene');
     this.mainNav = document.getElementById('main-nav');
 
-    console.log('Found elements:', {
-        introScreen: !!this.introScreen,
-        portfolioTitle: !!this.portfolioTitle,
-        introLines: this.introLines.length,
-        doorPaths: this.doorPaths.length,
-        doorHandle: !!this.doorHandle,
-        doorPrompt: !!this.doorPrompt,
-        doorSvg: !!this.doorSvg
-    });
+    debugLog('Elements: title=' + !!this.portfolioTitle + ' lines=' + this.introLines.length + ' paths=' + this.doorPaths.length);
 
     this.playIntro();
     this.setupDoorClick();
 },
 
 playIntro() {
-    console.log('Starting intro animation...');
+    debugLog('Starting intro animation...');
     const tl = gsap.timeline({
-        onStart: () => console.log('Timeline started'),
-        onComplete: () => console.log('Timeline completed')
+        onStart: () => debugLog('Timeline started'),
+        onComplete: () => debugLog('Timeline completed')
     });
 
     // Fade in portfolio title
@@ -75,14 +88,14 @@ playIntro() {
         opacity: 1,
         duration: 0.4,
         ease: 'power2.out',
-        onStart: () => console.log('Animating title')
+        onStart: () => debugLog('Animating title')
     }, 0.3);
 
     // Start drawing the door at the same time
-    console.log('Setting up door path animations, paths found:', this.doorPaths.length);
+    debugLog('Door paths found: ' + this.doorPaths.length);
     this.doorPaths.forEach((path, index) => {
         const length = path.getTotalLength ? path.getTotalLength() : 1000;
-        console.log(`Path ${index} length:`, length);
+        debugLog('Path ' + index + ' length: ' + length);
 
         // Set initial state
         gsap.set(path, {
@@ -95,7 +108,7 @@ playIntro() {
             strokeDashoffset: 0,
             duration: 2.2,
             ease: 'power1.inOut',
-            onStart: () => console.log(`Drawing path ${index}`)
+            onStart: () => debugLog('Drawing path ' + index)
         }, 0.3 + (index * 0.1));
     });
 
