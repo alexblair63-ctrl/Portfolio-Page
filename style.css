@@ -9,13 +9,13 @@
     --bg-primary: #2a2438;
     --bg-secondary: #352f44;
     --bg-wall: #3d3654;
-    --accent-warm: #7a7268;
+    --accent-warm: #7dd3c0;
     --accent-cool: #7c9885;
     --accent-pink: #d4a5a5;
     --text-primary: #f5f0e8;
     --text-secondary: #b8b0c8;
-    --window-sky: linear-gradient(180deg, #87CEEB 0%, #f4a261 100%);
-    --lamp-glow: rgba(244, 162, 97, 0);
+    --window-sky: linear-gradient(180deg, #87CEEB 0%, #7dd3c0 100%);
+    --lamp-glow: rgba(125, 211, 192, 0);
     --shadow-color: rgba(0, 0, 0, 0.3);
     
     /* Object colors */
@@ -34,7 +34,7 @@ body.night-mode {
     --bg-secondary: #252033;
     --bg-wall: #2d2640;
     --window-sky: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-    --lamp-glow: rgba(244, 162, 97, 0.4);
+    --lamp-glow: rgba(125, 211, 192, 0.4);
     --shadow-color: rgba(0, 0, 0, 0.6);
 }
 
@@ -124,7 +124,7 @@ body.desk-active {
     transform: translateY(30px) rotateX(45deg);
     transform-style: preserve-3d;
     perspective: 1000px;
-    text-shadow: 0 0 20px rgba(244, 162, 97, 0.3);
+    text-shadow: 0 0 20px rgba(125, 211, 192, 0.3);
 }
 
 .word-portfolio {
@@ -137,7 +137,7 @@ body.desk-active {
 .word-name {
     font-size: clamp(36px, 7vw, 96px);
     letter-spacing: 0.1em;
-    background: linear-gradient(135deg, #f5f0e8 0%, #f4a261 50%, #f5f0e8 100%);
+    background: linear-gradient(135deg, #f5f0e8 0%, #7dd3c0 50%, #f5f0e8 100%);
     background-size: 200% 200%;
     -webkit-background-clip: text;
     background-clip: text;
@@ -304,7 +304,7 @@ body.desk-active {
     padding: 12px 24px;
     border-radius: 30px;
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(244, 162, 97, 0.2);
+    border: 1px solid rgba(125, 211, 192, 0.2);
 }
 
 #main-nav a {
@@ -325,7 +325,7 @@ body.desk-active {
     height: 50px;
     border-radius: 50%;
     background: rgba(42, 36, 56, 0.9);
-    border: 1px solid rgba(244, 162, 97, 0.2);
+    border: 1px solid rgba(125, 211, 192, 0.2);
     cursor: pointer;
     position: relative;
     overflow: hidden;
@@ -383,7 +383,7 @@ body.night-mode .toggle-icon.moon {
 #content-container {
     position: relative;
     z-index: 10;
-    background: var(--bg-primary);
+    background: transparent;
 }
 
 /* Parallax Layers */
@@ -552,7 +552,7 @@ body.desk-active .desk-object.active {
     transform: translate(-50%, -50%);
     width: 200%;
     height: 200%;
-    background: radial-gradient(ellipse, rgba(244, 162, 97, 0.4) 0%, transparent 70%);
+    background: radial-gradient(ellipse, rgba(125, 211, 192, 0.4) 0%, transparent 70%);
     opacity: 0;
     transition: opacity 0.5s ease;
     pointer-events: none;
@@ -818,7 +818,7 @@ body.desk-active .desk-object.active {
     right: 10px;
     width: 6px;
     height: 50px;
-    background: linear-gradient(180deg, #ffd93d 0%, #ffd93d 85%, #2a2438 85%, #2a2438 92%, #f4a261 92%);
+    background: linear-gradient(180deg, #ffd93d 0%, #ffd93d 85%, #2a2438 85%, #2a2438 92%, #7dd3c0 92%);
     border-radius: 1px;
     transform: rotate(25deg);
 }
@@ -1171,7 +1171,7 @@ body.night-mode #obj-dog {
 
 .placeholder-item {
     background: rgba(53, 47, 68, 0.5);
-    border: 1px solid rgba(244, 162, 97, 0.2);
+    border: 1px solid rgba(125, 211, 192, 0.2);
     border-radius: 12px;
     padding: 60px 20px;
     text-align: center;
@@ -1212,7 +1212,7 @@ body.night-mode #obj-dog {
     top: 20px;
     left: 20px;
     background: rgba(42, 36, 56, 0.9);
-    border: 1px solid rgba(244, 162, 97, 0.2);
+    border: 1px solid rgba(125, 211, 192, 0.2);
     color: var(--text-secondary);
     padding: 12px 24px;
     border-radius: 30px;
@@ -1310,13 +1310,13 @@ body.night-mode #obj-dog {
 
     /* Improve touch targets for mobile */
     #portfolio-title {
-        -webkit-tap-highlight-color: rgba(244, 162, 97, 0.3);
+        -webkit-tap-highlight-color: rgba(125, 211, 192, 0.3);
         touch-action: manipulation;
     }
 
     #door-svg,
     #door-prompt {
-        -webkit-tap-highlight-color: rgba(244, 162, 97, 0.3);
+        -webkit-tap-highlight-color: rgba(125, 211, 192, 0.3);
         touch-action: manipulation;
     }
 
@@ -1339,7 +1339,7 @@ body.night-mode #obj-dog {
 
     #main-nav a {
         font-size: 10px;
-        -webkit-tap-highlight-color: rgba(244, 162, 97, 0.3);
+        -webkit-tap-highlight-color: rgba(125, 211, 192, 0.3);
         touch-action: manipulation;
     }
 
@@ -1380,7 +1380,7 @@ body.night-mode #obj-dog {
         display: flex;
         flex-direction: row;
         align-items: center;
-        -webkit-tap-highlight-color: rgba(244, 162, 97, 0.3);
+        -webkit-tap-highlight-color: rgba(125, 211, 192, 0.3);
         touch-action: manipulation;
     }
 
@@ -1419,7 +1419,7 @@ body.night-mode #obj-dog {
     /* Ensure buttons work well on mobile */
     #back-to-desk,
     #day-night-toggle {
-        -webkit-tap-highlight-color: rgba(244, 162, 97, 0.3);
+        -webkit-tap-highlight-color: rgba(125, 211, 192, 0.3);
         touch-action: manipulation;
     }
 }
