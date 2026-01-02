@@ -242,26 +242,77 @@ transitionToTopLeft() {
     // Kill all ongoing animations
     gsap.killTweensOf(this.titleWords);
 
-    // Explosive exit - words scatter then fade
-    tl.to(this.titleWords[0], {
-        x: -200,
-        y: -100,
-        rotation: -15,
-        opacity: 0,
-        scale: 0.5,
-        duration: 0.8,
-        ease: 'power2.in'
-    }, 0);
+    // Particle Dissolve Effect
+    this.titleWords.forEach((word, wordIndex) => {
+        const text = word.textContent;
+        const rect = word.getBoundingClientRect();
+        const particleContainer = document.createElement('div');
+        particleContainer.style.position = 'fixed';
+        particleContainer.style.left = rect.left + 'px';
+        particleContainer.style.top = rect.top + 'px';
+        particleContainer.style.width = rect.width + 'px';
+        particleContainer.style.height = rect.height + 'px';
+        particleContainer.style.pointerEvents = 'none';
+        particleContainer.style.zIndex = '10000';
+        document.body.appendChild(particleContainer);
 
-    tl.to(this.titleWords[1], {
-        x: 200,
-        y: 100,
-        rotation: 15,
-        opacity: 0,
-        scale: 0.5,
-        duration: 0.8,
-        ease: 'power2.in'
-    }, 0);
+        // Create particles for each letter
+        const letters = text.split('');
+        const letterWidth = rect.width / letters.length;
+
+        letters.forEach((letter, letterIndex) => {
+            // Create 8-12 particles per letter
+            const particleCount = Math.floor(Math.random() * 5) + 8;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.textContent = letter;
+                particle.style.position = 'absolute';
+                particle.style.left = (letterIndex * letterWidth) + (letterWidth / 2) + 'px';
+                particle.style.top = (rect.height / 2) + 'px';
+                particle.style.fontSize = window.getComputedStyle(word).fontSize;
+                particle.style.fontFamily = window.getComputedStyle(word).fontFamily;
+                particle.style.fontWeight = window.getComputedStyle(word).fontWeight;
+                particle.style.color = window.getComputedStyle(word).color;
+                particle.style.textShadow = window.getComputedStyle(word).textShadow;
+                particle.style.opacity = '1';
+                particle.style.transform = 'translate(-50%, -50%)';
+                particleContainer.appendChild(particle);
+
+                // Random direction and distance for each particle
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * 200 + 100;
+                const endX = Math.cos(angle) * distance;
+                const endY = Math.sin(angle) * distance;
+                const rotation = Math.random() * 720 - 360;
+                const duration = Math.random() * 0.6 + 0.8;
+                const delay = letterIndex * 0.03 + Math.random() * 0.1;
+
+                // Animate particle
+                tl.to(particle, {
+                    x: endX,
+                    y: endY,
+                    rotation: rotation,
+                    opacity: 0,
+                    scale: Math.random() * 0.3 + 0.1,
+                    duration: duration,
+                    ease: 'power2.out',
+                    onComplete: () => {
+                        if (i === 0 && letterIndex === letters.length - 1) {
+                            particleContainer.remove();
+                        }
+                    }
+                }, delay);
+            }
+        });
+
+        // Fade out original word quickly
+        tl.to(word, {
+            opacity: 0,
+            duration: 0.3,
+            ease: 'power2.in'
+        }, 0);
+    });
 
     // Fade out container
     tl.to(this.introTitleContainer, {
