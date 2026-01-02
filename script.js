@@ -168,27 +168,39 @@ setupIntroParallax() {
     // Only enable parallax on mobile
     if (!isMobile()) return;
 
-    let lastX = 0;
-    let lastY = 0;
-    let currentX = 0;
-    let currentY = 0;
+    debugLog('Setting up intro parallax...');
 
-    // Try to use device orientation (gyroscope) first
-    if (window.DeviceOrientationEvent) {
-        window.addEventListener('deviceorientation', (e) => {
-            if (!this.introScreen || this.introScreen.style.display === 'none') return;
+    // Request device orientation permission (required for iOS 13+)
+    const requestOrientationPermission = async () => {
+        if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+            debugLog('Requesting device orientation permission...');
+            try {
+                const permission = await DeviceOrientationEvent.requestPermission();
+                debugLog('Permission result: ' + permission);
+                if (permission === 'granted') {
+                    this.enableDeviceOrientation();
+                } else {
+                    debugLog('Permission denied, using touch fallback');
+                }
+            } catch (error) {
+                debugLog('Permission error: ' + error.message);
+            }
+        } else if (window.DeviceOrientationEvent) {
+            debugLog('Device orientation available without permission');
+            this.enableDeviceOrientation();
+        } else {
+            debugLog('Device orientation not supported');
+        }
+    };
 
-            // Get tilt angles (beta: front-to-back, gamma: left-to-right)
-            const beta = e.beta || 0;   // Range: -180 to 180
-            const gamma = e.gamma || 0;  // Range: -90 to 90
-
-            // Normalize values to -1 to 1 range
-            const tiltX = Math.max(-1, Math.min(1, gamma / 30));
-            const tiltY = Math.max(-1, Math.min(1, (beta - 45) / 30)); // Offset by 45 for natural holding
-
-            this.applyIntroParallax(tiltX, tiltY);
-        });
-    }
+    // Request permission on first touch (iOS requirement)
+    let permissionRequested = false;
+    this.introScreen.addEventListener('touchstart', () => {
+        if (!permissionRequested) {
+            permissionRequested = true;
+            requestOrientationPermission();
+        }
+    }, { once: true });
 
     // Also support touch/mouse movement as fallback
     const handleMove = (x, y) => {
@@ -211,6 +223,23 @@ setupIntroParallax() {
 
     this.introScreen.addEventListener('mousemove', (e) => {
         handleMove(e.clientX, e.clientY);
+    });
+},
+
+enableDeviceOrientation() {
+    debugLog('Enabling device orientation listener');
+    window.addEventListener('deviceorientation', (e) => {
+        if (!this.introScreen || this.introScreen.style.display === 'none') return;
+
+        // Get tilt angles (beta: front-to-back, gamma: left-to-right)
+        const beta = e.beta || 0;   // Range: -180 to 180
+        const gamma = e.gamma || 0;  // Range: -90 to 90
+
+        // Normalize values to -1 to 1 range
+        const tiltX = Math.max(-1, Math.min(1, gamma / 30));
+        const tiltY = Math.max(-1, Math.min(1, (beta - 45) / 30)); // Offset by 45 for natural holding
+
+        this.applyIntroParallax(tiltX, tiltY);
     });
 },
 

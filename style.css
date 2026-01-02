@@ -1117,17 +1117,23 @@ body.night-mode #obj-dog {
 
     #door-container {
         position: absolute;
-        left: 5%;
-        bottom: 10%;
-        right: auto;
+        left: auto;
+        right: 8%;
+        bottom: 5%;
         top: auto;
         transform: none;
         margin-top: 0;
+        z-index: 1;
+    }
+
+    #intro-text {
+        position: relative;
+        z-index: 2;
     }
 
     #door-svg {
         width: clamp(100px, 20vw, 150px);
-        opacity: 0.7;
+        opacity: 0.6;
     }
 
     #door-svg:hover {
