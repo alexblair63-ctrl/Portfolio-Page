@@ -1110,11 +1110,11 @@ body.night-mode #obj-dog {
     #intro-content {
         padding: 30px;
     }
-    
+
     #intro-text {
         padding-left: 0;
     }
-    
+
     #door-container {
         position: relative;
         right: auto;
@@ -1122,18 +1122,37 @@ body.night-mode #obj-dog {
         transform: none;
         margin-top: 40px;
     }
-    
+
+    /* Improve touch targets for mobile */
+    #door-svg,
+    #door-prompt {
+        -webkit-tap-highlight-color: rgba(244, 162, 97, 0.3);
+        touch-action: manipulation;
+    }
+
+    /* Disable hover effects on mobile, use active instead */
+    .desk-object:hover {
+        transform: none;
+    }
+
+    .desk-object:active {
+        transform: scale(0.95);
+        transition: transform 0.1s ease;
+    }
+
     #main-nav ul {
         flex-wrap: wrap;
         justify-content: center;
         gap: 10px;
         padding: 10px 16px;
     }
-    
+
     #main-nav a {
         font-size: 10px;
+        -webkit-tap-highlight-color: rgba(244, 162, 97, 0.3);
+        touch-action: manipulation;
     }
-    
+
     /* Stack objects vertically on mobile */
     .desk-object {
         position: relative !important;
@@ -1145,12 +1164,10 @@ body.night-mode #obj-dog {
         display: flex;
         flex-direction: column;
         align-items: center;
+        -webkit-tap-highlight-color: rgba(244, 162, 97, 0.3);
+        touch-action: manipulation;
     }
-    
-    .desk-object:hover {
-        transform: scale(1.05) !important;
-    }
-    
+
     .object-label {
         position: relative;
         bottom: auto;
@@ -1158,6 +1175,13 @@ body.night-mode #obj-dog {
         transform: none;
         opacity: 1;
         margin-top: 10px;
+    }
+
+    /* Ensure buttons work well on mobile */
+    #back-to-desk,
+    #day-night-toggle {
+        -webkit-tap-highlight-color: rgba(244, 162, 97, 0.3);
+        touch-action: manipulation;
     }
 }
 

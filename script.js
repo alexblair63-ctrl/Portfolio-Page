@@ -4,14 +4,20 @@ JavaScript - GSAP Animations & Interactions
 ============================================ */
 
 // Wait for DOM to be ready
-document.addEventListener(‘DOMContentLoaded’, () => {
-// Initialize all modules
-IntroSequence.init();
-ParallaxEffect.init();
-DeskInteractions.init();
-DayNightToggle.init();
-Navigation.init();
-RainEffect.init();
+document.addEventListener('DOMContentLoaded', () => {
+    // Check if GSAP is loaded
+    if (typeof gsap === 'undefined') {
+        console.error('GSAP not loaded! Animations will not work.');
+        return;
+    }
+
+    // Initialize all modules
+    IntroSequence.init();
+    ParallaxEffect.init();
+    DeskInteractions.init();
+    DayNightToggle.init();
+    Navigation.init();
+    RainEffect.init();
 });
 
 /* ============================================
@@ -97,8 +103,20 @@ playIntro() {
 },
 
 setupDoorClick() {
-    this.doorSvg.addEventListener('click', () => this.enterDesk());
-    this.doorPrompt.addEventListener('click', () => this.enterDesk());
+    // Support both click and touch events
+    const enterDeskHandler = () => this.enterDesk();
+
+    this.doorSvg.addEventListener('click', enterDeskHandler);
+    this.doorSvg.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        enterDeskHandler();
+    });
+
+    this.doorPrompt.addEventListener('click', enterDeskHandler);
+    this.doorPrompt.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        enterDeskHandler();
+    });
 },
 
 enterDesk() {
@@ -182,12 +200,27 @@ this.isEnabled = true;
 },
 
 setupListeners() {
+    // Disable parallax on mobile for performance
+    if (isMobile()) {
+        this.isEnabled = false;
+        return;
+    }
+
     // Mouse move for parallax
     document.addEventListener('mousemove', (e) => {
         if (!this.isEnabled) return;
         if (!this.deskScene.classList.contains('visible')) return;
 
         this.handleMove(e.clientX, e.clientY);
+    });
+
+    // Touch move for mobile parallax
+    document.addEventListener('touchmove', (e) => {
+        if (!this.isEnabled) return;
+        if (!this.deskScene.classList.contains('visible')) return;
+
+        const touch = e.touches[0];
+        this.handleMove(touch.clientX, touch.clientY);
     });
 
     // Recalculate center on resize
@@ -280,9 +313,15 @@ revealObjects() {
 
 setupObjectClicks() {
     this.objects.forEach(obj => {
-        obj.addEventListener('click', () => {
+        const clickHandler = () => {
             const section = obj.dataset.section;
             this.openSection(section, obj);
+        };
+
+        obj.addEventListener('click', clickHandler);
+        obj.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            clickHandler();
         });
     });
 },
@@ -290,12 +329,15 @@ setupObjectClicks() {
 setupNavLinks() {
     const navLinks = document.querySelectorAll('#main-nav a');
     navLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
+        const linkHandler = (e) => {
             e.preventDefault();
             const section = link.getAttribute('href').replace('#', '');
             const obj = document.querySelector(`[data-section="${section}"]`);
             this.openSection(section, obj);
-        });
+        };
+
+        link.addEventListener('click', linkHandler);
+        link.addEventListener('touchend', linkHandler);
     });
 },
 
@@ -346,7 +388,13 @@ openSection(sectionName, fromObject) {
 },
 
 setupBackButton() {
-    this.backButton.addEventListener('click', () => this.closeSection());
+    const backHandler = () => this.closeSection();
+
+    this.backButton.addEventListener('click', backHandler);
+    this.backButton.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        backHandler();
+    });
 },
 
 closeSection() {
@@ -454,21 +502,28 @@ getSectionContent(section) {
 setupDogInteraction() {
     const dog = document.getElementById('obj-dog');
     const tail = dog.querySelector('.dog-tail');
-    
-    dog.addEventListener('mouseenter', () => {
+
+    const speedUpTail = () => {
         // Speed up tail wagging
         gsap.to(tail, {
             animationDuration: '0.2s',
             overwrite: true
         });
-    });
+    };
 
-    dog.addEventListener('mouseleave', () => {
+    const normalTail = () => {
         gsap.to(tail, {
             animationDuration: '0.5s',
             overwrite: true
         });
-    });
+    };
+
+    dog.addEventListener('mouseenter', speedUpTail);
+    dog.addEventListener('mouseleave', normalTail);
+
+    // Touch support for mobile
+    dog.addEventListener('touchstart', speedUpTail);
+    dog.addEventListener('touchend', normalTail);
 }
 
 };
@@ -487,9 +542,15 @@ this.isNight = false;
 },
 
 setupToggle() {
-    this.toggle.addEventListener('click', () => {
+    const toggleHandler = () => {
         this.isNight = !this.isNight;
         this.switchTheme();
+    };
+
+    this.toggle.addEventListener('click', toggleHandler);
+    this.toggle.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        toggleHandler();
     });
 },
 
