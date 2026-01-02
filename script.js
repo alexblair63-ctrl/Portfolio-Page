@@ -7,7 +7,7 @@ JavaScript - GSAP Animations & Interactions
 const createDebugPanel = () => {
     const panel = document.createElement('div');
     panel.id = 'debug-panel';
-    panel.style.cssText = 'position:fixed;top:0;left:0;right:0;background:rgba(0,0,0,0.9);color:#0f0;padding:10px;font-size:10px;z-index:10000;max-height:150px;overflow-y:auto;font-family:monospace;';
+    panel.style.cssText = 'position:fixed;top:0;left:0;right:0;background:rgba(0,0,0,0.5);color:#0f0;padding:10px;font-size:10px;z-index:10000;max-height:150px;overflow-y:auto;font-family:monospace;pointer-events:none;';
     document.body.appendChild(panel);
     return panel;
 };
