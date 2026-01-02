@@ -87,6 +87,72 @@ body.desk-active {
     z-index: 1000;
 }
 
+/* Centered Title Container (Initial State) */
+#intro-title-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#intro-title-container.transitioning {
+    pointer-events: none;
+}
+
+#portfolio-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(32px, 6vw, 80px);
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: #f5f0e8;
+    text-align: center;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(10px, 2vw, 20px);
+    transition: transform 0.3s ease;
+    user-select: none;
+}
+
+.title-word {
+    display: block;
+    position: relative;
+    opacity: 0;
+    transform: translateY(30px) rotateX(45deg);
+    transform-style: preserve-3d;
+    perspective: 1000px;
+    text-shadow: 0 0 20px rgba(244, 162, 97, 0.3);
+}
+
+.word-portfolio {
+    font-size: clamp(24px, 4vw, 56px);
+    letter-spacing: 0.4em;
+    color: var(--accent-warm);
+    text-transform: uppercase;
+}
+
+.word-name {
+    font-size: clamp(36px, 7vw, 96px);
+    letter-spacing: 0.1em;
+    background: linear-gradient(135deg, #f5f0e8 0%, #f4a261 50%, #f5f0e8 100%);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-shift 3s ease infinite;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+@keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+/* Content container (shown after click) */
 #intro-content {
     position: absolute;
     top: 0;
@@ -96,9 +162,11 @@ body.desk-active {
     padding: 40px 60px;
     display: flex;
     flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
 }
 
-#portfolio-title {
+#portfolio-title-small {
     font-family: 'Syne', sans-serif;
     font-size: clamp(12px, 1.5vw, 18px);
     font-weight: 600;
@@ -138,7 +206,7 @@ body.desk-active {
     margin-top: 16px;
 }
 
-/* Door Container */
+/* Door Container (hidden initially, shown after title click) */
 #door-container {
     position: absolute;
     right: 15%;
@@ -147,8 +215,9 @@ body.desk-active {
     display: flex;
     flex-direction: column;
     align-items: center;
+    opacity: 0;
+    pointer-events: none;
     z-index: 10;
-    pointer-events: auto;
 }
 
 #door-svg {
@@ -1185,6 +1254,26 @@ body.night-mode #obj-dog {
    ============================================ */
 
 @media (max-width: 1024px) {
+    /* Mobile title adjustments */
+    #intro-title-container {
+        width: 90%;
+        padding: 20px;
+    }
+
+    #portfolio-title {
+        gap: clamp(8px, 1.5vw, 16px);
+    }
+
+    .word-portfolio {
+        font-size: clamp(20px, 5vw, 40px);
+        letter-spacing: 0.3em;
+    }
+
+    .word-name {
+        font-size: clamp(28px, 8vw, 64px);
+        letter-spacing: 0.08em;
+    }
+
     /* Simplified mobile experience */
     #intro-content {
         padding: 30px;
@@ -1215,11 +1304,16 @@ body.night-mode #obj-dog {
         opacity: 0.6;
     }
 
-    #door-svg:hover {
+    #door-svg:active {
         opacity: 1;
     }
 
     /* Improve touch targets for mobile */
+    #portfolio-title {
+        -webkit-tap-highlight-color: rgba(244, 162, 97, 0.3);
+        touch-action: manipulation;
+    }
+
     #door-svg,
     #door-prompt {
         -webkit-tap-highlight-color: rgba(244, 162, 97, 0.3);
