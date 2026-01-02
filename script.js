@@ -5,19 +5,30 @@ JavaScript - GSAP Animations & Interactions
 
 // Wait for DOM to be ready
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM loaded, initializing portfolio...');
+
     // Check if GSAP is loaded
     if (typeof gsap === 'undefined') {
         console.error('GSAP not loaded! Animations will not work.');
+        alert('Error: Animation library failed to load. Please refresh the page.');
         return;
     }
 
+    console.log('GSAP loaded successfully');
+
     // Initialize all modules
-    IntroSequence.init();
-    ParallaxEffect.init();
-    DeskInteractions.init();
-    DayNightToggle.init();
-    Navigation.init();
-    RainEffect.init();
+    try {
+        IntroSequence.init();
+        ParallaxEffect.init();
+        DeskInteractions.init();
+        DayNightToggle.init();
+        Navigation.init();
+        RainEffect.init();
+        console.log('All modules initialized successfully');
+    } catch (error) {
+        console.error('Initialization error:', error);
+        alert('Error initializing portfolio: ' + error.message);
+    }
 });
 
 /* ============================================
@@ -27,35 +38,52 @@ Door drawing + text fade-ins
 
 const IntroSequence = {
 init() {
-this.introScreen = document.getElementById(‘intro-screen’);
-this.portfolioTitle = document.getElementById(‘portfolio-title’);
-this.introLines = document.querySelectorAll(’.intro-line’);
-this.doorPaths = document.querySelectorAll(’.door-path’);
-this.doorHandle = document.querySelector(’.door-handle’);
-this.doorPrompt = document.getElementById(‘door-prompt’);
-this.doorSvg = document.getElementById(‘door-svg’);
-this.deskScene = document.getElementById(‘desk-scene’);
-this.mainNav = document.getElementById(‘main-nav’);
+    console.log('Initializing IntroSequence...');
+    this.introScreen = document.getElementById('intro-screen');
+    this.portfolioTitle = document.getElementById('portfolio-title');
+    this.introLines = document.querySelectorAll('.intro-line');
+    this.doorPaths = document.querySelectorAll('.door-path');
+    this.doorHandle = document.querySelector('.door-handle');
+    this.doorPrompt = document.getElementById('door-prompt');
+    this.doorSvg = document.getElementById('door-svg');
+    this.deskScene = document.getElementById('desk-scene');
+    this.mainNav = document.getElementById('main-nav');
 
+    console.log('Found elements:', {
+        introScreen: !!this.introScreen,
+        portfolioTitle: !!this.portfolioTitle,
+        introLines: this.introLines.length,
+        doorPaths: this.doorPaths.length,
+        doorHandle: !!this.doorHandle,
+        doorPrompt: !!this.doorPrompt,
+        doorSvg: !!this.doorSvg
+    });
 
     this.playIntro();
     this.setupDoorClick();
 },
 
 playIntro() {
-    const tl = gsap.timeline();
+    console.log('Starting intro animation...');
+    const tl = gsap.timeline({
+        onStart: () => console.log('Timeline started'),
+        onComplete: () => console.log('Timeline completed')
+    });
 
     // Fade in portfolio title
     tl.to(this.portfolioTitle, {
         opacity: 1,
         duration: 0.4,
-        ease: 'power2.out'
+        ease: 'power2.out',
+        onStart: () => console.log('Animating title')
     }, 0.3);
 
     // Start drawing the door at the same time
+    console.log('Setting up door path animations, paths found:', this.doorPaths.length);
     this.doorPaths.forEach((path, index) => {
         const length = path.getTotalLength ? path.getTotalLength() : 1000;
-        
+        console.log(`Path ${index} length:`, length);
+
         // Set initial state
         gsap.set(path, {
             strokeDasharray: length,
@@ -66,7 +94,8 @@ playIntro() {
         tl.to(path, {
             strokeDashoffset: 0,
             duration: 2.2,
-            ease: 'power1.inOut'
+            ease: 'power1.inOut',
+            onStart: () => console.log(`Drawing path ${index}`)
         }, 0.3 + (index * 0.1));
     });
 
