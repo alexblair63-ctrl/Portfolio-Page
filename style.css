@@ -1116,11 +1116,22 @@ body.night-mode #obj-dog {
     }
 
     #door-container {
-        position: relative;
+        position: absolute;
+        left: 5%;
+        bottom: 10%;
         right: auto;
         top: auto;
         transform: none;
-        margin-top: 40px;
+        margin-top: 0;
+    }
+
+    #door-svg {
+        width: clamp(100px, 20vw, 150px);
+        opacity: 0.7;
+    }
+
+    #door-svg:hover {
+        opacity: 1;
     }
 
     /* Improve touch targets for mobile */

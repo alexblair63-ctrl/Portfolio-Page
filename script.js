@@ -67,6 +67,8 @@ init() {
     this.doorHandle = document.querySelector('.door-handle');
     this.doorPrompt = document.getElementById('door-prompt');
     this.doorSvg = document.getElementById('door-svg');
+    this.doorContainer = document.getElementById('door-container');
+    this.introText = document.getElementById('intro-text');
     this.deskScene = document.getElementById('desk-scene');
     this.mainNav = document.getElementById('main-nav');
 
@@ -74,6 +76,7 @@ init() {
 
     this.playIntro();
     this.setupDoorClick();
+    this.setupIntroParallax();
 },
 
 playIntro() {
@@ -158,6 +161,80 @@ setupDoorClick() {
     this.doorPrompt.addEventListener('touchend', (e) => {
         e.preventDefault();
         enterDeskHandler();
+    });
+},
+
+setupIntroParallax() {
+    // Only enable parallax on mobile
+    if (!isMobile()) return;
+
+    let lastX = 0;
+    let lastY = 0;
+    let currentX = 0;
+    let currentY = 0;
+
+    // Try to use device orientation (gyroscope) first
+    if (window.DeviceOrientationEvent) {
+        window.addEventListener('deviceorientation', (e) => {
+            if (!this.introScreen || this.introScreen.style.display === 'none') return;
+
+            // Get tilt angles (beta: front-to-back, gamma: left-to-right)
+            const beta = e.beta || 0;   // Range: -180 to 180
+            const gamma = e.gamma || 0;  // Range: -90 to 90
+
+            // Normalize values to -1 to 1 range
+            const tiltX = Math.max(-1, Math.min(1, gamma / 30));
+            const tiltY = Math.max(-1, Math.min(1, (beta - 45) / 30)); // Offset by 45 for natural holding
+
+            this.applyIntroParallax(tiltX, tiltY);
+        });
+    }
+
+    // Also support touch/mouse movement as fallback
+    const handleMove = (x, y) => {
+        if (!this.introScreen || this.introScreen.style.display === 'none') return;
+
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight / 2;
+
+        // Normalize to -1 to 1 range
+        const deltaX = (x - centerX) / centerX;
+        const deltaY = (y - centerY) / centerY;
+
+        this.applyIntroParallax(deltaX, deltaY);
+    };
+
+    this.introScreen.addEventListener('touchmove', (e) => {
+        const touch = e.touches[0];
+        handleMove(touch.clientX, touch.clientY);
+    });
+
+    this.introScreen.addEventListener('mousemove', (e) => {
+        handleMove(e.clientX, e.clientY);
+    });
+},
+
+applyIntroParallax(deltaX, deltaY) {
+    // Text moves more (appears closer) - depth factor 1.5
+    const textMoveX = deltaX * 20;
+    const textMoveY = deltaY * 20;
+
+    // Door moves less (appears further back) - depth factor 0.3
+    const doorMoveX = deltaX * 6;
+    const doorMoveY = deltaY * 6;
+
+    gsap.to(this.introText, {
+        x: textMoveX,
+        y: textMoveY,
+        duration: 0.5,
+        ease: 'power2.out'
+    });
+
+    gsap.to([this.doorContainer, this.portfolioTitle], {
+        x: doorMoveX,
+        y: doorMoveY,
+        duration: 0.5,
+        ease: 'power2.out'
     });
 },
 
