@@ -13,37 +13,46 @@
 <body>
     <!-- Intro Screen -->
     <div id="intro-screen">
-        <div id="intro-content">
-            <h1 id="portfolio-title">ALEXANDER BLAIR PORTFOLIO</h1>
+        <!-- Centered animated title -->
+        <div id="intro-title-container">
+            <h1 id="portfolio-title">
+                <span class="title-word word-portfolio">PORTFOLIO</span>
+                <span class="title-word word-name">ALEXANDER BLAIR</span>
+            </h1>
+        </div>
 
-        <div id="intro-text">
-            <p class="intro-line" data-delay="0.5">Must a jack of all trades be a master of none?</p>
-            <p class="intro-line" data-delay="1.0">I get obsessed with understanding how things work,<br>go deep enough to produce real output,<br>and carry those skills forward into the next thing.</p>
-            <p class="intro-line" data-delay="1.6">Each medium isn't a phase—it's a layer.</p>
-            <p class="intro-line" data-delay="2.1">Most designers can't edit video.<br>Most editors can't build systems.<br>Most coders have no design taste.</p>
+        <!-- Door content (hidden initially, shown after click) -->
+        <div id="intro-content">
+            <h1 id="portfolio-title-small">ALEXANDER BLAIR PORTFOLIO</h1>
+
+            <div id="intro-text">
+                <p class="intro-line" data-delay="0.5">Must a jack of all trades be a master of none?</p>
+                <p class="intro-line" data-delay="1.0">I get obsessed with understanding how things work,<br>go deep enough to produce real output,<br>and carry those skills forward into the next thing.</p>
+                <p class="intro-line" data-delay="1.6">Each medium isn't a phase—it's a layer.</p>
+                <p class="intro-line" data-delay="2.1">Most designers can't edit video.<br>Most editors can't build systems.<br>Most coders have no design taste.</p>
+            </div>
+        </div>
+
+        <!-- Door SVG that draws itself -->
+        <div id="door-container">
+            <svg id="door-svg" viewBox="0 0 200 350" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Door frame -->
+                <path class="door-path door-frame" d="M 20 10 L 180 10 L 180 340 L 20 340 Z" />
+                <!-- Door body -->
+                <path class="door-path door-body" d="M 30 20 L 170 20 L 170 330 L 30 330 Z" />
+                <!-- Top panel -->
+                <path class="door-path door-panel" d="M 45 40 L 155 40 L 155 140 L 45 140 Z" />
+                <!-- Bottom panel -->
+                <path class="door-path door-panel" d="M 45 160 L 155 160 L 155 310 L 45 310 Z" />
+                <!-- Door handle -->
+                <circle class="door-path door-handle" cx="145" cy="200" r="8" />
+            </svg>
+            <div id="door-prompt">
+                <span class="prompt-arrow">→</span>
+                <span class="prompt-text">ENTER</span>
+            </div>
         </div>
     </div>
-    
-    <!-- Door SVG that draws itself -->
-    <div id="door-container">
-        <svg id="door-svg" viewBox="0 0 200 350" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- Door frame -->
-            <path class="door-path door-frame" d="M 20 10 L 180 10 L 180 340 L 20 340 Z" />
-            <!-- Door body -->
-            <path class="door-path door-body" d="M 30 20 L 170 20 L 170 330 L 30 330 Z" />
-            <!-- Top panel -->
-            <path class="door-path door-panel" d="M 45 40 L 155 40 L 155 140 L 45 140 Z" />
-            <!-- Bottom panel -->
-            <path class="door-path door-panel" d="M 45 160 L 155 160 L 155 310 L 45 310 Z" />
-            <!-- Door handle -->
-            <circle class="door-path door-handle" cx="145" cy="200" r="8" />
-        </svg>
-        <div id="door-prompt">
-            <span class="prompt-arrow">→</span>
-            <span class="prompt-text">ENTER</span>
-        </div>
-    </div>
-</div>
 
 <!-- Nav Bar (hidden initially) -->
 <nav id="main-nav">

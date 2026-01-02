@@ -64,7 +64,11 @@ const IntroSequence = {
 init() {
     debugLog('Initializing IntroSequence...');
     this.introScreen = document.getElementById('intro-screen');
+    this.introTitleContainer = document.getElementById('intro-title-container');
     this.portfolioTitle = document.getElementById('portfolio-title');
+    this.portfolioTitleSmall = document.getElementById('portfolio-title-small');
+    this.titleWords = document.querySelectorAll('.title-word');
+    this.introContent = document.getElementById('intro-content');
     this.introLines = document.querySelectorAll('.intro-line');
     this.doorPaths = document.querySelectorAll('.door-path');
     this.doorHandle = document.querySelector('.door-handle');
@@ -74,31 +78,205 @@ init() {
     this.introText = document.getElementById('intro-text');
     this.deskScene = document.getElementById('desk-scene');
     this.mainNav = document.getElementById('main-nav');
+    this.hasTransitioned = false;
 
-    debugLog('Elements: title=' + !!this.portfolioTitle + ' lines=' + this.introLines.length + ' paths=' + this.doorPaths.length);
+    debugLog('Elements: title=' + !!this.portfolioTitle + ' words=' + this.titleWords.length + ' paths=' + this.doorPaths.length);
 
-    this.playIntro();
-    this.setupDoorClick();
+    this.playTitleIntro();
+    this.setupTitleHover();
+    this.setupTitleClick();
     this.setupIntroParallax();
 },
 
-playIntro() {
-    debugLog('Starting intro animation...');
+playTitleIntro() {
+    debugLog('Starting impressive title intro...');
     const tl = gsap.timeline({
-        onStart: () => debugLog('Timeline started'),
-        onComplete: () => debugLog('Timeline completed')
+        onStart: () => debugLog('Title animation started'),
+        onComplete: () => debugLog('Title animation completed')
     });
 
-    // Fade in portfolio title
-    tl.to(this.portfolioTitle, {
+    // Animate each word with impressive effects
+    this.titleWords.forEach((word, index) => {
+        // Fade in, scale, and rotate with elastic bounce
+        tl.to(word, {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            rotationX: 0,
+            duration: 1.2,
+            ease: 'elastic.out(1, 0.6)',
+            onStart: () => debugLog('Animating word ' + index)
+        }, index * 0.3);
+
+        // Add a subtle glow pulse
+        tl.to(word, {
+            textShadow: '0 0 30px rgba(244, 162, 97, 0.6), 0 0 60px rgba(244, 162, 97, 0.3)',
+            duration: 0.8,
+            ease: 'power2.inOut',
+            yoyo: true,
+            repeat: 1
+        }, index * 0.3 + 0.5);
+    });
+
+    // Add floating animation after intro
+    tl.add(() => {
+        gsap.to(this.titleWords, {
+            y: '+=10',
+            duration: 2,
+            ease: 'power1.inOut',
+            yoyo: true,
+            repeat: -1,
+            stagger: 0.2
+        });
+    }, '+=0.5');
+},
+
+setupTitleHover() {
+    debugLog('Setting up title hover effects...');
+
+    this.portfolioTitle.addEventListener('mouseenter', () => {
+        if (this.hasTransitioned) return;
+
+        gsap.to(this.titleWords[0], {
+            x: -10,
+            rotationY: -5,
+            duration: 0.6,
+            ease: 'power2.out'
+        });
+
+        gsap.to(this.titleWords[1], {
+            x: 10,
+            rotationY: 5,
+            scale: 1.05,
+            duration: 0.6,
+            ease: 'power2.out'
+        });
+
+        gsap.to(this.titleWords, {
+            textShadow: '0 0 40px rgba(244, 162, 97, 0.8), 0 0 80px rgba(244, 162, 97, 0.4)',
+            duration: 0.4,
+            ease: 'power2.out'
+        });
+    });
+
+    this.portfolioTitle.addEventListener('mouseleave', () => {
+        if (this.hasTransitioned) return;
+
+        gsap.to(this.titleWords, {
+            x: 0,
+            rotationY: 0,
+            scale: 1,
+            textShadow: '0 0 20px rgba(244, 162, 97, 0.3)',
+            duration: 0.6,
+            ease: 'power2.out'
+        });
+    });
+},
+
+setupTitleClick() {
+    debugLog('Setting up title click handler...');
+
+    const clickHandler = () => {
+        if (this.hasTransitioned) return;
+        this.hasTransitioned = true;
+        this.transitionToTopLeft();
+    };
+
+    this.portfolioTitle.addEventListener('click', clickHandler);
+    this.portfolioTitle.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        clickHandler();
+    });
+},
+
+transitionToTopLeft() {
+    debugLog('Transitioning title to top-left...');
+    this.introTitleContainer.classList.add('transitioning');
+
+    const tl = gsap.timeline({
+        onComplete: () => {
+            debugLog('Transition complete, showing door...');
+            this.showDoorAndContent();
+        }
+    });
+
+    // Kill all ongoing animations
+    gsap.killTweensOf(this.titleWords);
+
+    // Explosive exit - words scatter then fade
+    tl.to(this.titleWords[0], {
+        x: -200,
+        y: -100,
+        rotation: -15,
+        opacity: 0,
+        scale: 0.5,
+        duration: 0.8,
+        ease: 'power2.in'
+    }, 0);
+
+    tl.to(this.titleWords[1], {
+        x: 200,
+        y: 100,
+        rotation: 15,
+        opacity: 0,
+        scale: 0.5,
+        duration: 0.8,
+        ease: 'power2.in'
+    }, 0);
+
+    // Fade out container
+    tl.to(this.introTitleContainer, {
+        opacity: 0,
+        duration: 0.5,
+        ease: 'power2.in'
+    }, 0.3);
+},
+
+showDoorAndContent() {
+    debugLog('Showing door and content...');
+    const tl = gsap.timeline();
+
+    // Show intro content container
+    tl.to(this.introContent, {
         opacity: 1,
-        duration: 0.4,
-        ease: 'power2.out',
-        onStart: () => debugLog('Animating title')
+        pointerEvents: 'auto',
+        duration: 0.3
+    }, 0);
+
+    // Animate small title in from top-left
+    tl.fromTo(this.portfolioTitleSmall,
+        {
+            opacity: 0,
+            x: -50,
+            y: -20
+        },
+        {
+            opacity: 1,
+            x: 0,
+            y: 0,
+            duration: 0.8,
+            ease: 'power2.out'
+        }, 0.2);
+
+    // Show door container
+    tl.to(this.doorContainer, {
+        opacity: 1,
+        pointerEvents: 'auto',
+        duration: 0.5
     }, 0.3);
 
-    // Start drawing the door at the same time
-    debugLog('Door paths found: ' + this.doorPaths.length);
+    // Animate door drawing
+    this.animateDoorDrawing(tl, 0.5);
+
+    // Setup door click after animation
+    tl.add(() => {
+        this.setupDoorClick();
+    }, '+=0.5');
+},
+
+animateDoorDrawing(timeline, startTime) {
+    debugLog('Animating door drawing...');
+
     this.doorPaths.forEach((path, index) => {
         const length = path.getTotalLength ? path.getTotalLength() : 1000;
         debugLog('Path ' + index + ' length: ' + length);
@@ -109,48 +287,57 @@ playIntro() {
             strokeDashoffset: length
         });
 
-        // Animate the drawing
-        tl.to(path, {
+        // Animate the drawing with extra flair
+        timeline.to(path, {
             strokeDashoffset: 0,
-            duration: 2.2,
+            duration: 2.5,
             ease: 'power1.inOut',
             onStart: () => debugLog('Drawing path ' + index)
-        }, 0.3 + (index * 0.1));
-    });
-
-    // Fade in intro text lines
-    this.introLines.forEach((line) => {
-        const delay = parseFloat(line.dataset.delay);
-        tl.to(line, {
-            opacity: 1,
-            duration: 0.4,
-            ease: 'power2.out'
-        }, delay);
+        }, startTime + (index * 0.15));
     });
 
     // Fade in door handle
-    tl.to(this.doorHandle, {
+    timeline.to(this.doorHandle, {
         opacity: 1,
-        duration: 0.3,
-        ease: 'power2.out'
-    }, 2.4);
+        scale: 1,
+        duration: 0.4,
+        ease: 'back.out(2)'
+    }, startTime + 2.5);
 
-    // Fade in door prompt
-    tl.to(this.doorPrompt, {
-        opacity: 1,
-        duration: 0.3,
-        ease: 'power2.out'
-    }, 3);
+    // Fade in door prompt with bounce
+    timeline.fromTo(this.doorPrompt,
+        {
+            opacity: 0,
+            y: -10
+        },
+        {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+            ease: 'back.out(1.7)'
+        }, startTime + 3);
 
-    // Add glow to door when ready
-    tl.to(this.doorSvg, {
-        filter: 'drop-shadow(0 0 20px rgba(244, 162, 97, 0.3))',
-        duration: 0.5,
+    // Add pulsing glow to door when ready
+    timeline.to(this.doorSvg, {
+        filter: 'drop-shadow(0 0 30px rgba(244, 162, 97, 0.5))',
+        duration: 0.8,
         ease: 'power2.out'
-    }, 3);
+    }, startTime + 3.2);
+
+    // Continuous glow pulse
+    timeline.add(() => {
+        gsap.to(this.doorSvg, {
+            filter: 'drop-shadow(0 0 40px rgba(244, 162, 97, 0.6))',
+            duration: 1.5,
+            ease: 'power1.inOut',
+            yoyo: true,
+            repeat: -1
+        });
+    }, startTime + 3.5);
 },
 
 setupDoorClick() {
+    debugLog('Setting up door click handler...');
     // Support both click and touch events
     const enterDeskHandler = () => {
         debugLog('Door clicked! Entering desk...');
@@ -289,32 +476,44 @@ applyIntroParallax(deltaX, deltaY) {
 
 enterDesk() {
     debugLog('enterDesk() called - starting transition...');
+
+    // Kill all door animations
+    gsap.killTweensOf(this.doorSvg);
+
     const tl = gsap.timeline({
         onStart: () => debugLog('Desk transition timeline started'),
         onComplete: () => debugLog('Desk transition timeline completed')
     });
 
-    // Door opening animation
+    // Door opening animation - more dramatic
     tl.to(this.doorSvg, {
-        scale: 3,
+        scale: 3.5,
+        rotation: 5,
         opacity: 0,
-        duration: 0.8,
+        filter: 'drop-shadow(0 0 60px rgba(244, 162, 97, 0.8))',
+        duration: 1,
         ease: 'power2.in',
         onStart: () => debugLog('Animating door opening')
     });
 
     // Fade out intro content
-    tl.to([this.portfolioTitle, this.introLines, this.doorPrompt], {
+    tl.to([this.portfolioTitleSmall, this.introLines, this.doorPrompt], {
         opacity: 0,
         duration: 0.4,
         ease: 'power2.in',
         onStart: () => debugLog('Fading out intro content')
     }, 0);
 
-    // Fade out intro screen
+    // Fade out intro screen with flash effect
+    tl.to(this.introScreen, {
+        backgroundColor: '#f4a261',
+        duration: 0.2,
+        ease: 'power2.in'
+    }, 0.6);
+
     tl.to(this.introScreen, {
         opacity: 0,
-        duration: 0.5,
+        duration: 0.6,
         ease: 'power2.inOut',
         onStart: () => debugLog('Fading out intro screen'),
         onComplete: () => {
@@ -324,20 +523,20 @@ enterDesk() {
             document.body.classList.remove('intro-active');
             document.body.classList.add('desk-active');
         }
-    }, 0.5);
+    }, 0.8);
 
     // Reveal desk scene
     tl.add(() => {
         this.deskScene.classList.add('visible');
-    }, 0.6);
+    }, 0.9);
 
     tl.fromTo(this.deskScene,
         { opacity: 0 },
         {
             opacity: 1,
-            duration: 0.8,
+            duration: 1.2,
             ease: 'power2.out'
-        }, 0.6
+        }, 0.9
     );
 
     // Animate desk objects appearing and set up scroll
@@ -345,21 +544,21 @@ enterDesk() {
         DeskInteractions.revealObjects();
         // Scroll to top to ensure first section is active
         window.scrollTo(0, 0);
-    }, 1);
+    }, 1.4);
 
     // Show navigation
     tl.add(() => {
         this.mainNav.classList.add('visible');
-    }, 1.2);
+    }, 1.8);
 
     tl.fromTo(this.mainNav,
         { opacity: 0, y: -20 },
         {
             opacity: 1,
             y: 0,
-            duration: 0.5,
-            ease: 'power2.out'
-        }, 1.2
+            duration: 0.6,
+            ease: 'back.out(1.7)'
+        }, 1.8
     );
 }
 
