@@ -233,8 +233,8 @@ Mouse movement creates depth
 
 const ParallaxEffect = {
 init() {
-this.layers = document.querySelectorAll(’.parallax-layer’);
-this.deskScene = document.getElementById(‘desk-scene’);
+this.layers = document.querySelectorAll('.parallax-layer');
+this.deskScene = document.getElementById('desk-scene');
 this.centerX = window.innerWidth / 2;
 this.centerY = window.innerHeight / 2;
 this.isEnabled = true;
@@ -307,12 +307,12 @@ Object hovers, clicks, and section navigation
 
 const DeskInteractions = {
 init() {
-this.objects = document.querySelectorAll(’.desk-object’);
-this.overlay = document.getElementById(‘section-overlay’);
-this.sectionContent = document.getElementById(‘section-content’);
-this.backButton = document.getElementById(‘back-to-desk’);
-this.deskScene = document.getElementById(‘desk-scene’);
-this.mainNav = document.getElementById(‘main-nav’);
+this.objects = document.querySelectorAll('.desk-object');
+this.overlay = document.getElementById('section-overlay');
+this.sectionContent = document.getElementById('section-content');
+this.backButton = document.getElementById('back-to-desk');
+this.deskScene = document.getElementById('desk-scene');
+this.mainNav = document.getElementById('main-nav');
 
     this.setupObjectClicks();
     this.setupBackButton();
@@ -577,7 +577,7 @@ Theme switching with transitions
 
 const DayNightToggle = {
 init() {
-this.toggle = document.getElementById(‘day-night-toggle’);
+this.toggle = document.getElementById('day-night-toggle');
 this.isNight = false;
 
     this.setupToggle();
@@ -653,7 +653,7 @@ Animated raindrops for night mode
 
 const RainEffect = {
 init() {
-this.container = document.getElementById(‘rain-container’);
+this.container = document.getElementById('rain-container');
 this.isRaining = false;
 this.raindrops = [];
 },
@@ -705,7 +705,7 @@ Smooth scroll and active states
 
 const Navigation = {
 init() {
-this.nav = document.getElementById(‘main-nav’);
+this.nav = document.getElementById('main-nav');
 // Additional nav functionality can be added here
 }
 };
@@ -722,10 +722,10 @@ return window.innerWidth <= 1024;
 // Debounce function for performance
 function debounce(func, wait) {
 let timeout;
-return function executedFunction(…args) {
+return function executedFunction(...args) {
 const later = () => {
 clearTimeout(timeout);
-func(…args);
+func(...args);
 };
 clearTimeout(timeout);
 timeout = setTimeout(later, wait);
