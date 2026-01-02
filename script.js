@@ -7,21 +7,45 @@ JavaScript - GSAP Animations & Interactions
 const createDebugPanel = () => {
     const panel = document.createElement('div');
     panel.id = 'debug-panel';
-    panel.style.cssText = 'position:fixed;top:0;left:0;right:0;background:rgba(0,0,0,0.9);color:#0f0;padding:10px;font-size:10px;z-index:10000;max-height:150px;overflow-y:auto;font-family:monospace;pointer-events:auto;';
+    panel.style.cssText = 'position:fixed;top:0;left:0;right:0;background:rgba(0,0,0,0.9);color:#0f0;padding:10px;font-size:10px;z-index:10000;max-height:150px;overflow-y:auto;font-family:monospace;pointer-events:auto;display:none;transform:translateY(-100%);transition:transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;opacity:0;';
     document.body.appendChild(panel);
 
-    // Add toggle button
+    // Add toggle button with bug emoji
     const toggleBtn = document.createElement('button');
     toggleBtn.id = 'debug-toggle';
-    toggleBtn.textContent = 'Hide Debug';
-    toggleBtn.style.cssText = 'position:fixed;top:10px;right:10px;z-index:10001;background:#0f0;color:#000;border:none;padding:8px 16px;border-radius:4px;font-family:monospace;font-size:10px;cursor:pointer;font-weight:bold;';
+    toggleBtn.textContent = '🐛';
+    toggleBtn.style.cssText = 'position:fixed;top:10px;right:10px;z-index:10001;background:rgba(15,255,0,0.2);color:#0f0;border:2px solid #0f0;padding:8px 12px;border-radius:50%;font-size:20px;cursor:pointer;backdrop-filter:blur(10px);transition:all 0.3s ease;';
     document.body.appendChild(toggleBtn);
 
-    let isVisible = true;
+    // Hover effect for button
+    toggleBtn.addEventListener('mouseenter', () => {
+        toggleBtn.style.transform = 'scale(1.1) rotate(10deg)';
+        toggleBtn.style.background = 'rgba(15,255,0,0.3)';
+    });
+    toggleBtn.addEventListener('mouseleave', () => {
+        toggleBtn.style.transform = 'scale(1) rotate(0deg)';
+        toggleBtn.style.background = 'rgba(15,255,0,0.2)';
+    });
+
+    let isVisible = false;
     toggleBtn.addEventListener('click', () => {
         isVisible = !isVisible;
-        panel.style.display = isVisible ? 'block' : 'none';
-        toggleBtn.textContent = isVisible ? 'Hide Debug' : 'Show Debug';
+        if (isVisible) {
+            panel.style.display = 'block';
+            // Trigger animation after display change
+            setTimeout(() => {
+                panel.style.transform = 'translateY(0)';
+                panel.style.opacity = '1';
+            }, 10);
+            toggleBtn.style.transform = 'scale(1.2) rotate(180deg)';
+        } else {
+            panel.style.transform = 'translateY(-100%)';
+            panel.style.opacity = '0';
+            setTimeout(() => {
+                panel.style.display = 'none';
+            }, 300);
+            toggleBtn.style.transform = 'scale(1) rotate(0deg)';
+        }
     });
 
     return panel;
@@ -310,6 +334,11 @@ showDoorAndContent() {
     tl.add(() => {
         this.setupDoorClick();
     }, '+=0.5');
+
+    // Start parallax demo after door animation completes
+    tl.add(() => {
+        this.playIntroParallaxDemo();
+    }, '+=0.3');
 },
 
 animateDoorDrawing(timeline, startTime) {
@@ -451,6 +480,9 @@ setupIntroParallax() {
     const handleMove = (x, y) => {
         if (!this.introScreen || this.introScreen.style.display === 'none') return;
 
+        // Stop breathing animation when user starts interacting
+        this.stopBreathing();
+
         const centerX = window.innerWidth / 2;
         const centerY = window.innerHeight / 2;
 
@@ -475,6 +507,9 @@ enableDeviceOrientation() {
     debugLog('Enabling device orientation listener');
     window.addEventListener('deviceorientation', (e) => {
         if (!this.introScreen || this.introScreen.style.display === 'none') return;
+
+        // Stop breathing animation when device orientation is detected
+        this.stopBreathing();
 
         // Get tilt angles (beta: front-to-back, gamma: left-to-right)
         const beta = e.beta || 0;   // Range: -180 to 180
@@ -533,8 +568,95 @@ applyIntroParallax(deltaX, deltaY) {
     });
 },
 
+playIntroParallaxDemo() {
+    // Play dramatic bounce-in effect, then continuous breathing
+    debugLog('Playing intro parallax demo...');
+
+    this.isPlayingDemo = true;
+    this.breathingAnimation = null;
+
+    // BOUNCE IN: Dramatic forward -> back -> settle
+    const bounceTl = gsap.timeline({
+        onComplete: () => {
+            debugLog('Bounce complete, starting breathing...');
+            this.startBreathing();
+        }
+    });
+
+    // Forward tilt (simulated)
+    bounceTl.to({}, {
+        duration: 0.6,
+        ease: 'power2.out',
+        onUpdate: function() {
+            const progress = this.progress();
+            const tiltX = Math.sin(progress * Math.PI) * 0.4; // Peak at 0.4
+            const tiltY = Math.sin(progress * Math.PI) * 0.3; // Peak at 0.3
+            IntroSequence.applyIntroParallax(tiltX, tiltY);
+        }
+    });
+
+    // Back tilt with elastic bounce
+    bounceTl.to({}, {
+        duration: 0.8,
+        ease: 'elastic.out(1.5, 0.5)',
+        onUpdate: function() {
+            const progress = this.progress();
+            const tiltX = Math.sin(progress * Math.PI) * -0.3 * (1 - progress); // Bounce back
+            const tiltY = Math.sin(progress * Math.PI) * -0.2 * (1 - progress);
+            IntroSequence.applyIntroParallax(tiltX, tiltY);
+        }
+    });
+
+    // Settle to very slight offset (not perfectly centered)
+    bounceTl.to({}, {
+        duration: 0.4,
+        ease: 'power1.inOut',
+        onUpdate: function() {
+            const progress = this.progress();
+            const tiltX = 0.05 * (1 - progress);
+            const tiltY = 0.03 * (1 - progress);
+            IntroSequence.applyIntroParallax(tiltX, tiltY);
+        }
+    });
+},
+
+startBreathing() {
+    if (!this.isPlayingDemo) return;
+
+    // Continuous gentle breathing motion
+    let time = 0;
+    this.breathingAnimation = gsap.ticker.add(() => {
+        if (!this.isPlayingDemo || !this.introScreen || this.introScreen.style.display === 'none') {
+            this.stopBreathing();
+            return;
+        }
+
+        time += 0.01; // Slow increment for gentle motion
+
+        // Gentle sinusoidal motion in both axes
+        const tiltX = Math.sin(time * 0.8) * 0.08; // Very subtle ±0.08 range
+        const tiltY = Math.cos(time * 0.6) * 0.06; // Slightly different frequency for organic feel
+
+        this.applyIntroParallax(tiltX, tiltY);
+    });
+
+    debugLog('Breathing animation started');
+},
+
+stopBreathing() {
+    if (this.breathingAnimation) {
+        gsap.ticker.remove(this.breathingAnimation);
+        this.breathingAnimation = null;
+        this.isPlayingDemo = false;
+        debugLog('Breathing animation stopped - user interaction detected');
+    }
+},
+
 enterDesk() {
     debugLog('enterDesk() called - starting transition...');
+
+    // Stop breathing when entering desk
+    this.stopBreathing();
 
     // Kill all door animations
     gsap.killTweensOf(this.doorSvg);
@@ -609,6 +731,11 @@ enterDesk() {
     tl.add(() => {
         this.mainNav.classList.add('visible');
     }, 1.8);
+
+    // Start desk parallax demo
+    tl.add(() => {
+        ParallaxEffect.playDeskParallaxDemo();
+    }, 2.2);
 
     tl.fromTo(this.mainNav,
         { opacity: 0, y: -20 },
@@ -691,6 +818,9 @@ enableDeviceOrientation() {
     window.addEventListener('deviceorientation', (e) => {
         if (!this.deskScene.classList.contains('visible')) return;
 
+        // Stop breathing when user tilts device
+        this.stopBreathing();
+
         const beta = e.beta || 0;
         const gamma = e.gamma || 0;
 
@@ -704,6 +834,9 @@ enableDeviceOrientation() {
 
 handleMove(x, y) {
     if (!this.isEnabled) return;
+
+    // Stop breathing when user moves mouse
+    this.stopBreathing();
 
     // Normalize mouse position to -1 to 1 range
     const deltaX = (x - this.centerX) / this.centerX;
@@ -772,8 +905,93 @@ applyParallax(deltaX, deltaY) {
     });
 },
 
+playDeskParallaxDemo() {
+    // Play dramatic bounce-in effect, then continuous breathing for desk scene
+    debugLog('Playing desk parallax demo...');
+
+    this.isPlayingDemo = true;
+    this.breathingAnimation = null;
+
+    // BOUNCE IN: Similar to intro but for desk
+    const bounceTl = gsap.timeline({
+        onComplete: () => {
+            debugLog('Desk bounce complete, starting breathing...');
+            this.startBreathing();
+        }
+    });
+
+    // Forward tilt
+    bounceTl.to({}, {
+        duration: 0.7,
+        ease: 'power2.out',
+        onUpdate: function() {
+            const progress = this.progress();
+            const tiltX = Math.sin(progress * Math.PI) * 0.5;
+            const tiltY = Math.sin(progress * Math.PI) * 0.35;
+            ParallaxEffect.applyParallax(tiltX, tiltY);
+        }
+    });
+
+    // Back tilt with elastic bounce
+    bounceTl.to({}, {
+        duration: 0.9,
+        ease: 'elastic.out(1.5, 0.5)',
+        onUpdate: function() {
+            const progress = this.progress();
+            const tiltX = Math.sin(progress * Math.PI) * -0.35 * (1 - progress);
+            const tiltY = Math.sin(progress * Math.PI) * -0.25 * (1 - progress);
+            ParallaxEffect.applyParallax(tiltX, tiltY);
+        }
+    });
+
+    // Settle
+    bounceTl.to({}, {
+        duration: 0.5,
+        ease: 'power1.inOut',
+        onUpdate: function() {
+            const progress = this.progress();
+            const tiltX = 0.05 * (1 - progress);
+            const tiltY = 0.03 * (1 - progress);
+            ParallaxEffect.applyParallax(tiltX, tiltY);
+        }
+    });
+},
+
+startBreathing() {
+    if (!this.isPlayingDemo) return;
+
+    // Continuous gentle breathing motion for desk
+    let time = 0;
+    this.breathingAnimation = gsap.ticker.add(() => {
+        if (!this.isPlayingDemo || !this.deskScene.classList.contains('visible')) {
+            this.stopBreathing();
+            return;
+        }
+
+        time += 0.008; // Slightly slower for desk scene
+
+        // Gentle sinusoidal motion
+        const tiltX = Math.sin(time * 0.7) * 0.1; // Slightly more movement for desk
+        const tiltY = Math.cos(time * 0.5) * 0.08;
+
+        this.applyParallax(tiltX, tiltY);
+    });
+
+    debugLog('Desk breathing animation started');
+},
+
+stopBreathing() {
+    if (this.breathingAnimation) {
+        gsap.ticker.remove(this.breathingAnimation);
+        this.breathingAnimation = null;
+        this.isPlayingDemo = false;
+        debugLog('Desk breathing animation stopped - user interaction detected');
+    }
+},
+
 disable() {
     this.isEnabled = false;
+    this.stopBreathing();
 },
 
 enable() {
