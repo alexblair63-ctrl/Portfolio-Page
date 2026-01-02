@@ -13,7 +13,7 @@
     --accent-cool: #7c9885;
     --accent-pink: #d4a5a5;
     --text-primary: #f5f0e8;
-    --text-secondary: #b8b0c8;
+    --text-secondary: #e5dff0;
     --window-sky: linear-gradient(180deg, #87CEEB 0%, #7dd3c0 100%);
     --lamp-glow: rgba(125, 211, 192, 0);
     --shadow-color: rgba(0, 0, 0, 0.3);
@@ -204,6 +204,7 @@ body.desk-active {
     font-weight: 700;
     color: var(--accent-warm);
     margin-top: 16px;
+    opacity: 0;
 }
 
 /* Door Container (hidden initially, shown after title click) */
