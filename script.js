@@ -14,17 +14,19 @@ const createDebugPanel = () => {
     const toggleBtn = document.createElement('button');
     toggleBtn.id = 'debug-toggle';
     toggleBtn.textContent = '🐞';
-    toggleBtn.style.cssText = 'position:fixed;top:10px;right:10px;z-index:10001;background:rgba(255,50,50,0.2);color:#ff3232;border:2px solid #ff3232;padding:8px 12px;border-radius:50%;font-size:20px;cursor:pointer;backdrop-filter:blur(10px);transition:all 0.3s ease;';
+    toggleBtn.style.cssText = 'position:fixed;top:10px;right:10px;z-index:10001;background:rgba(255,50,50,0.2);color:#ff3232;border:2px solid #ff3232;padding:8px 12px;border-radius:50%;font-size:20px;cursor:pointer;backdrop-filter:blur(10px);transition:all 0.3s ease;opacity:0.6;';
     document.body.appendChild(toggleBtn);
 
     // Hover effect for button
     toggleBtn.addEventListener('mouseenter', () => {
         toggleBtn.style.transform = 'scale(1.1) rotate(10deg)';
         toggleBtn.style.background = 'rgba(255,50,50,0.3)';
+        toggleBtn.style.opacity = '1';
     });
     toggleBtn.addEventListener('mouseleave', () => {
         toggleBtn.style.transform = 'scale(1) rotate(0deg)';
         toggleBtn.style.background = 'rgba(255,50,50,0.2)';
+        toggleBtn.style.opacity = '0.6';
     });
 
     let isVisible = false;
