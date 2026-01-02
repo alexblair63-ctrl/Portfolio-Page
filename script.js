@@ -7,8 +7,23 @@ JavaScript - GSAP Animations & Interactions
 const createDebugPanel = () => {
     const panel = document.createElement('div');
     panel.id = 'debug-panel';
-    panel.style.cssText = 'position:fixed;top:0;left:0;right:0;background:rgba(0,0,0,0.5);color:#0f0;padding:10px;font-size:10px;z-index:10000;max-height:150px;overflow-y:auto;font-family:monospace;pointer-events:none;';
+    panel.style.cssText = 'position:fixed;top:0;left:0;right:0;background:rgba(0,0,0,0.9);color:#0f0;padding:10px;font-size:10px;z-index:10000;max-height:150px;overflow-y:auto;font-family:monospace;pointer-events:auto;';
     document.body.appendChild(panel);
+
+    // Add toggle button
+    const toggleBtn = document.createElement('button');
+    toggleBtn.id = 'debug-toggle';
+    toggleBtn.textContent = 'Hide Debug';
+    toggleBtn.style.cssText = 'position:fixed;top:10px;right:10px;z-index:10001;background:#0f0;color:#000;border:none;padding:8px 16px;border-radius:4px;font-family:monospace;font-size:10px;cursor:pointer;font-weight:bold;';
+    document.body.appendChild(toggleBtn);
+
+    let isVisible = true;
+    toggleBtn.addEventListener('click', () => {
+        isVisible = !isVisible;
+        panel.style.display = isVisible ? 'block' : 'none';
+        toggleBtn.textContent = isVisible ? 'Hide Debug' : 'Show Debug';
+    });
+
     return panel;
 };
 

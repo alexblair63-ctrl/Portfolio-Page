@@ -376,8 +376,8 @@ body.night-mode .toggle-icon.moon {
 }
 
 #desk-scene.visible {
-    opacity: 0.3;
-    pointer-events: none;
+    opacity: 1;
+    pointer-events: auto;
 }
 
 #content-container {
@@ -523,8 +523,8 @@ body.night-mode .toggle-icon.moon {
 }
 
 body.desk-active .desk-object {
-    opacity: 0.5;
-    transform: scale(0.7);
+    opacity: 0.7;
+    transform: scale(0.85);
 }
 
 body.desk-active .desk-object.active {
@@ -1343,28 +1343,77 @@ body.night-mode #obj-dog {
         touch-action: manipulation;
     }
 
-    /* Stack objects vertically on mobile */
+    /* Mobile symbols - scrollable vertical list on left side */
+    #desk-scene {
+        pointer-events: auto;
+    }
+
+    #midground {
+        position: fixed;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: auto;
+        height: 60vh;
+        max-height: 500px;
+        overflow-y: auto;
+        overflow-x: visible;
+        padding: 20px 0;
+        z-index: 200;
+        /* Hide scrollbar but keep functionality */
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    #midground::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Stack objects vertically in scrollable container */
     .desk-object {
         position: relative !important;
         bottom: auto !important;
-        left: auto !important;
+        left: 10px !important;
         right: auto !important;
-        transform: none !important;
-        margin: 20px auto;
+        top: auto !important;
+        margin: 30px 0;
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         align-items: center;
         -webkit-tap-highlight-color: rgba(244, 162, 97, 0.3);
         touch-action: manipulation;
     }
 
+    /* Make all symbols visible by default on mobile */
+    body.desk-active .desk-object {
+        opacity: 1;
+        transform: scale(0.9);
+    }
+
+    body.desk-active .desk-object.active {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+
     .object-label {
         position: relative;
         bottom: auto;
-        left: auto;
+        left: 15px;
         transform: none;
         opacity: 1;
-        margin-top: 10px;
+        margin-top: 0;
+    }
+
+    /* Hide background elements on mobile to reduce clutter */
+    #desk-surface,
+    #background,
+    .ambient-object {
+        display: none;
+    }
+
+    /* Adjust content padding on mobile */
+    .content-section {
+        padding: 100px 5% 100px 5%;
     }
 
     /* Ensure buttons work well on mobile */
