@@ -147,6 +147,8 @@ body.desk-active {
     display: flex;
     flex-direction: column;
     align-items: center;
+    z-index: 10;
+    pointer-events: auto;
 }
 
 #door-svg {
@@ -155,6 +157,7 @@ body.desk-active {
     cursor: pointer;
     filter: drop-shadow(0 0 20px rgba(122, 114, 104, 0));
     transition: filter 0.3s ease;
+    pointer-events: auto;
 }
 
 #door-svg:hover {
@@ -189,6 +192,8 @@ body.desk-active {
     font-size: 14px;
     letter-spacing: 0.2em;
     color: var(--text-secondary);
+    cursor: pointer;
+    pointer-events: auto;
 }
 
 .prompt-arrow {

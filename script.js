@@ -152,19 +152,36 @@ playIntro() {
 
 setupDoorClick() {
     // Support both click and touch events
-    const enterDeskHandler = () => this.enterDesk();
+    const enterDeskHandler = () => {
+        debugLog('Door clicked! Entering desk...');
+        this.enterDesk();
+    };
 
-    this.doorSvg.addEventListener('click', enterDeskHandler);
+    debugLog('Setting up door click handlers...');
+
+    this.doorSvg.addEventListener('click', () => {
+        debugLog('Door SVG click detected');
+        enterDeskHandler();
+    });
+
     this.doorSvg.addEventListener('touchend', (e) => {
+        debugLog('Door SVG touchend detected');
         e.preventDefault();
         enterDeskHandler();
     });
 
-    this.doorPrompt.addEventListener('click', enterDeskHandler);
+    this.doorPrompt.addEventListener('click', () => {
+        debugLog('Door prompt click detected');
+        enterDeskHandler();
+    });
+
     this.doorPrompt.addEventListener('touchend', (e) => {
+        debugLog('Door prompt touchend detected');
         e.preventDefault();
         enterDeskHandler();
     });
+
+    debugLog('Door click handlers set up. doorSvg=' + !!this.doorSvg + ' doorPrompt=' + !!this.doorPrompt);
 },
 
 setupIntroParallax() {
@@ -271,21 +288,27 @@ applyIntroParallax(deltaX, deltaY) {
 },
 
 enterDesk() {
-    const tl = gsap.timeline();
+    debugLog('enterDesk() called - starting transition...');
+    const tl = gsap.timeline({
+        onStart: () => debugLog('Desk transition timeline started'),
+        onComplete: () => debugLog('Desk transition timeline completed')
+    });
 
     // Door opening animation
     tl.to(this.doorSvg, {
         scale: 3,
         opacity: 0,
         duration: 0.8,
-        ease: 'power2.in'
+        ease: 'power2.in',
+        onStart: () => debugLog('Animating door opening')
     });
 
     // Fade out intro content
     tl.to([this.portfolioTitle, this.introLines, this.doorPrompt], {
         opacity: 0,
         duration: 0.4,
-        ease: 'power2.in'
+        ease: 'power2.in',
+        onStart: () => debugLog('Fading out intro content')
     }, 0);
 
     // Fade out intro screen
@@ -293,7 +316,9 @@ enterDesk() {
         opacity: 0,
         duration: 0.5,
         ease: 'power2.inOut',
+        onStart: () => debugLog('Fading out intro screen'),
         onComplete: () => {
+            debugLog('Intro screen hidden, switching to desk-active');
             this.introScreen.style.display = 'none';
             // Switch body classes to enable scrolling
             document.body.classList.remove('intro-active');
