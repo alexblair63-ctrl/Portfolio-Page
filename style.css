@@ -186,7 +186,7 @@ body.desk-active {
 .intro-line {
     font-size: clamp(14px, 2vw, 20px);
     line-height: 1.8;
-    color: var(--text-secondary);
+    color: var(--text-primary);
     opacity: 0;
     margin-bottom: 24px;
 }
