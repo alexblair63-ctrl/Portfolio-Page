@@ -7,21 +7,45 @@ JavaScript - GSAP Animations & Interactions
 const createDebugPanel = () => {
     const panel = document.createElement('div');
     panel.id = 'debug-panel';
-    panel.style.cssText = 'position:fixed;top:0;left:0;right:0;background:rgba(0,0,0,0.9);color:#0f0;padding:10px;font-size:10px;z-index:10000;max-height:150px;overflow-y:auto;font-family:monospace;pointer-events:auto;';
+    panel.style.cssText = 'position:fixed;top:0;left:0;right:0;background:rgba(0,0,0,0.9);color:#0f0;padding:10px;font-size:10px;z-index:10000;max-height:150px;overflow-y:auto;font-family:monospace;pointer-events:auto;display:none;transform:translateY(-100%);transition:transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;opacity:0;';
     document.body.appendChild(panel);
 
-    // Add toggle button
+    // Add toggle button with bug emoji
     const toggleBtn = document.createElement('button');
     toggleBtn.id = 'debug-toggle';
-    toggleBtn.textContent = 'Hide Debug';
-    toggleBtn.style.cssText = 'position:fixed;top:10px;right:10px;z-index:10001;background:#0f0;color:#000;border:none;padding:8px 16px;border-radius:4px;font-family:monospace;font-size:10px;cursor:pointer;font-weight:bold;';
+    toggleBtn.textContent = '🐛';
+    toggleBtn.style.cssText = 'position:fixed;top:10px;right:10px;z-index:10001;background:rgba(15,255,0,0.2);color:#0f0;border:2px solid #0f0;padding:8px 12px;border-radius:50%;font-size:20px;cursor:pointer;backdrop-filter:blur(10px);transition:all 0.3s ease;';
     document.body.appendChild(toggleBtn);
 
-    let isVisible = true;
+    // Hover effect for button
+    toggleBtn.addEventListener('mouseenter', () => {
+        toggleBtn.style.transform = 'scale(1.1) rotate(10deg)';
+        toggleBtn.style.background = 'rgba(15,255,0,0.3)';
+    });
+    toggleBtn.addEventListener('mouseleave', () => {
+        toggleBtn.style.transform = 'scale(1) rotate(0deg)';
+        toggleBtn.style.background = 'rgba(15,255,0,0.2)';
+    });
+
+    let isVisible = false;
     toggleBtn.addEventListener('click', () => {
         isVisible = !isVisible;
-        panel.style.display = isVisible ? 'block' : 'none';
-        toggleBtn.textContent = isVisible ? 'Hide Debug' : 'Show Debug';
+        if (isVisible) {
+            panel.style.display = 'block';
+            // Trigger animation after display change
+            setTimeout(() => {
+                panel.style.transform = 'translateY(0)';
+                panel.style.opacity = '1';
+            }, 10);
+            toggleBtn.style.transform = 'scale(1.2) rotate(180deg)';
+        } else {
+            panel.style.transform = 'translateY(-100%)';
+            panel.style.opacity = '0';
+            setTimeout(() => {
+                panel.style.display = 'none';
+            }, 300);
+            toggleBtn.style.transform = 'scale(1) rotate(0deg)';
+        }
     });
 
     return panel;
