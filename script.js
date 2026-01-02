@@ -620,61 +620,21 @@ applyIntroParallax(deltaX, deltaY) {
 },
 
 playIntroParallaxDemo() {
-    // Play dramatic bounce-in effect, then continuous breathing
+    // Subtle breathing parallax animation only
     debugLog('Playing intro parallax demo...');
 
     this.isPlayingDemo = true;
     this.breathingAnimation = null;
 
-    // BOUNCE IN: Dramatic forward -> back -> settle
-    const bounceTl = gsap.timeline({
-        onComplete: () => {
-            debugLog('Bounce complete, starting breathing...');
-            this.startBreathing();
-        }
-    });
-
-    // Forward tilt (simulated)
-    bounceTl.to({}, {
-        duration: 0.6,
-        ease: 'power2.out',
-        onUpdate: function() {
-            const progress = this.progress();
-            const tiltX = Math.sin(progress * Math.PI) * 0.4; // Peak at 0.4
-            const tiltY = Math.sin(progress * Math.PI) * 0.3; // Peak at 0.3
-            IntroSequence.applyIntroParallax(tiltX, tiltY);
-        }
-    });
-
-    // Back tilt with elastic bounce
-    bounceTl.to({}, {
-        duration: 0.8,
-        ease: 'elastic.out(1.5, 0.5)',
-        onUpdate: function() {
-            const progress = this.progress();
-            const tiltX = Math.sin(progress * Math.PI) * -0.3 * (1 - progress); // Bounce back
-            const tiltY = Math.sin(progress * Math.PI) * -0.2 * (1 - progress);
-            IntroSequence.applyIntroParallax(tiltX, tiltY);
-        }
-    });
-
-    // Settle to very slight offset (not perfectly centered)
-    bounceTl.to({}, {
-        duration: 0.4,
-        ease: 'power1.inOut',
-        onUpdate: function() {
-            const progress = this.progress();
-            const tiltX = 0.05 * (1 - progress);
-            const tiltY = 0.03 * (1 - progress);
-            IntroSequence.applyIntroParallax(tiltX, tiltY);
-        }
-    });
+    // Start breathing immediately with a gentle fade-in
+    debugLog('Starting gentle breathing animation...');
+    this.startBreathing();
 },
 
 startBreathing() {
     if (!this.isPlayingDemo) return;
 
-    // Continuous gentle breathing motion
+    // Continuous gentle breathing motion - even more subtle
     let time = 0;
     this.breathingAnimation = gsap.ticker.add(() => {
         if (!this.isPlayingDemo || !this.introScreen || this.introScreen.style.display === 'none') {
@@ -682,11 +642,11 @@ startBreathing() {
             return;
         }
 
-        time += 0.01; // Slow increment for gentle motion
+        time += 0.008; // Slower increment for very gentle motion
 
-        // Gentle sinusoidal motion in both axes
-        const tiltX = Math.sin(time * 0.8) * 0.08; // Very subtle ±0.08 range
-        const tiltY = Math.cos(time * 0.6) * 0.06; // Slightly different frequency for organic feel
+        // Very subtle sinusoidal motion in both axes
+        const tiltX = Math.sin(time * 0.7) * 0.05; // Reduced from 0.08 to 0.05
+        const tiltY = Math.cos(time * 0.5) * 0.04; // Reduced from 0.06 to 0.04
 
         this.applyIntroParallax(tiltX, tiltY);
     });
@@ -957,61 +917,21 @@ applyParallax(deltaX, deltaY) {
 },
 
 playDeskParallaxDemo() {
-    // Play dramatic bounce-in effect, then continuous breathing for desk scene
+    // Subtle breathing parallax animation only
     debugLog('Playing desk parallax demo...');
 
     this.isPlayingDemo = true;
     this.breathingAnimation = null;
 
-    // BOUNCE IN: Similar to intro but for desk
-    const bounceTl = gsap.timeline({
-        onComplete: () => {
-            debugLog('Desk bounce complete, starting breathing...');
-            this.startBreathing();
-        }
-    });
-
-    // Forward tilt
-    bounceTl.to({}, {
-        duration: 0.7,
-        ease: 'power2.out',
-        onUpdate: function() {
-            const progress = this.progress();
-            const tiltX = Math.sin(progress * Math.PI) * 0.5;
-            const tiltY = Math.sin(progress * Math.PI) * 0.35;
-            ParallaxEffect.applyParallax(tiltX, tiltY);
-        }
-    });
-
-    // Back tilt with elastic bounce
-    bounceTl.to({}, {
-        duration: 0.9,
-        ease: 'elastic.out(1.5, 0.5)',
-        onUpdate: function() {
-            const progress = this.progress();
-            const tiltX = Math.sin(progress * Math.PI) * -0.35 * (1 - progress);
-            const tiltY = Math.sin(progress * Math.PI) * -0.25 * (1 - progress);
-            ParallaxEffect.applyParallax(tiltX, tiltY);
-        }
-    });
-
-    // Settle
-    bounceTl.to({}, {
-        duration: 0.5,
-        ease: 'power1.inOut',
-        onUpdate: function() {
-            const progress = this.progress();
-            const tiltX = 0.05 * (1 - progress);
-            const tiltY = 0.03 * (1 - progress);
-            ParallaxEffect.applyParallax(tiltX, tiltY);
-        }
-    });
+    // Start breathing immediately with a gentle fade-in
+    debugLog('Starting gentle desk breathing animation...');
+    this.startBreathing();
 },
 
 startBreathing() {
     if (!this.isPlayingDemo) return;
 
-    // Continuous gentle breathing motion for desk
+    // Continuous gentle breathing motion for desk - more subtle
     let time = 0;
     this.breathingAnimation = gsap.ticker.add(() => {
         if (!this.isPlayingDemo || !this.deskScene.classList.contains('visible')) {
@@ -1019,11 +939,11 @@ startBreathing() {
             return;
         }
 
-        time += 0.008; // Slightly slower for desk scene
+        time += 0.006; // Slower for more gentle motion
 
-        // Gentle sinusoidal motion
-        const tiltX = Math.sin(time * 0.7) * 0.1; // Slightly more movement for desk
-        const tiltY = Math.cos(time * 0.5) * 0.08;
+        // Very subtle sinusoidal motion
+        const tiltX = Math.sin(time * 0.7) * 0.06; // Reduced from 0.1 to 0.06
+        const tiltY = Math.cos(time * 0.5) * 0.05; // Reduced from 0.08 to 0.05
 
         this.applyParallax(tiltX, tiltY);
     });
