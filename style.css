@@ -9,7 +9,7 @@
     --bg-primary: #2a2438;
     --bg-secondary: #352f44;
     --bg-wall: #3d3654;
-    --accent-warm: #f4a261;
+    --accent-warm: #7a7268;
     --accent-cool: #7c9885;
     --accent-pink: #d4a5a5;
     --text-primary: #f5f0e8;
@@ -153,12 +153,12 @@ body.desk-active {
     width: clamp(120px, 15vw, 200px);
     height: auto;
     cursor: pointer;
-    filter: drop-shadow(0 0 20px rgba(244, 162, 97, 0));
+    filter: drop-shadow(0 0 20px rgba(122, 114, 104, 0));
     transition: filter 0.3s ease;
 }
 
 #door-svg:hover {
-    filter: drop-shadow(0 0 30px rgba(244, 162, 97, 0.5));
+    filter: drop-shadow(0 0 30px rgba(122, 114, 104, 0.4));
 }
 
 .door-path {
@@ -170,7 +170,7 @@ body.desk-active {
 }
 
 .door-body {
-    fill: rgba(244, 162, 97, 0.1);
+    fill: rgba(122, 114, 104, 0.1);
 }
 
 .door-handle {
