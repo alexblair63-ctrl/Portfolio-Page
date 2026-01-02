@@ -26,6 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const debugPanel = createDebugPanel();
     debugLog('DOM loaded, initializing portfolio...');
 
+    // Set initial body class for intro
+    document.body.classList.add('intro-active');
+
     // Check if GSAP is loaded
     if (typeof gsap === 'undefined') {
         console.error('GSAP not loaded! Animations will not work.');
@@ -292,6 +295,9 @@ enterDesk() {
         ease: 'power2.inOut',
         onComplete: () => {
             this.introScreen.style.display = 'none';
+            // Switch body classes to enable scrolling
+            document.body.classList.remove('intro-active');
+            document.body.classList.add('desk-active');
         }
     }, 0.5);
 
@@ -300,12 +306,12 @@ enterDesk() {
         this.deskScene.classList.add('visible');
     }, 0.6);
 
-    tl.fromTo(this.deskScene, 
+    tl.fromTo(this.deskScene,
         { opacity: 0 },
-        { 
-            opacity: 1, 
-            duration: 0.8, 
-            ease: 'power2.out' 
+        {
+            opacity: 1,
+            duration: 0.8,
+            ease: 'power2.out'
         }, 0.6
     );
 
@@ -321,11 +327,11 @@ enterDesk() {
 
     tl.fromTo(this.mainNav,
         { opacity: 0, y: -20 },
-        { 
-            opacity: 1, 
-            y: 0, 
-            duration: 0.5, 
-            ease: 'power2.out' 
+        {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+            ease: 'power2.out'
         }, 1.2
     );
 }
@@ -344,37 +350,59 @@ this.deskScene = document.getElementById('desk-scene');
 this.centerX = window.innerWidth / 2;
 this.centerY = window.innerHeight / 2;
 this.isEnabled = true;
+this.scrollOffset = 0;
     this.setupListeners();
 },
 
 setupListeners() {
-    // Disable parallax on mobile for performance
-    if (isMobile()) {
-        this.isEnabled = false;
-        return;
+    // Add scroll-based parallax (works on all devices)
+    window.addEventListener('scroll', () => {
+        if (!this.isEnabled) return;
+        if (!this.deskScene.classList.contains('visible')) return;
+
+        this.handleScroll();
+    });
+
+    // Mouse move for additional parallax on desktop
+    if (!isMobile()) {
+        document.addEventListener('mousemove', (e) => {
+            if (!this.isEnabled) return;
+            if (!this.deskScene.classList.contains('visible')) return;
+
+            this.handleMove(e.clientX, e.clientY);
+        });
+
+        // Touch move for tablet/mobile parallax
+        document.addEventListener('touchmove', (e) => {
+            if (!this.isEnabled) return;
+            if (!this.deskScene.classList.contains('visible')) return;
+
+            const touch = e.touches[0];
+            this.handleMove(touch.clientX, touch.clientY);
+        });
     }
-
-    // Mouse move for parallax
-    document.addEventListener('mousemove', (e) => {
-        if (!this.isEnabled) return;
-        if (!this.deskScene.classList.contains('visible')) return;
-
-        this.handleMove(e.clientX, e.clientY);
-    });
-
-    // Touch move for mobile parallax
-    document.addEventListener('touchmove', (e) => {
-        if (!this.isEnabled) return;
-        if (!this.deskScene.classList.contains('visible')) return;
-
-        const touch = e.touches[0];
-        this.handleMove(touch.clientX, touch.clientY);
-    });
 
     // Recalculate center on resize
     window.addEventListener('resize', () => {
         this.centerX = window.innerWidth / 2;
         this.centerY = window.innerHeight / 2;
+    });
+},
+
+handleScroll() {
+    const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+
+    this.layers.forEach(layer => {
+        const depth = parseFloat(layer.dataset.depth);
+        // Parallax based on scroll - layers move at different speeds
+        const scrollMove = scrollY * depth * 0.5;
+
+        gsap.to(layer, {
+            y: -scrollMove,
+            duration: 0.3,
+            ease: 'power1.out',
+            overwrite: 'auto'
+        });
     });
 },
 
@@ -389,9 +417,9 @@ handleMove(x, y) {
 
         gsap.to(layer, {
             x: moveX,
-            y: moveY,
             duration: 0.5,
-            ease: 'power2.out'
+            ease: 'power2.out',
+            overwrite: false
         });
     });
 },
