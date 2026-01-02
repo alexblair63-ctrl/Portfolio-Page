@@ -315,9 +315,11 @@ enterDesk() {
         }, 0.6
     );
 
-    // Animate desk objects appearing
+    // Animate desk objects appearing and set up scroll
     tl.add(() => {
         DeskInteractions.revealObjects();
+        // Scroll to top to ensure first section is active
+        window.scrollTo(0, 0);
     }, 1);
 
     // Show navigation
@@ -349,79 +351,22 @@ this.layers = document.querySelectorAll('.parallax-layer');
 this.deskScene = document.getElementById('desk-scene');
 this.centerX = window.innerWidth / 2;
 this.centerY = window.innerHeight / 2;
-this.isEnabled = true;
+this.isEnabled = false; // Disabled for scroll-linked navigation
 this.scrollOffset = 0;
-    this.setupListeners();
+    // Parallax disabled for new scroll-linked design
+    // this.setupListeners();
 },
 
 setupListeners() {
-    // Add scroll-based parallax (works on all devices)
-    window.addEventListener('scroll', () => {
-        if (!this.isEnabled) return;
-        if (!this.deskScene.classList.contains('visible')) return;
-
-        this.handleScroll();
-    });
-
-    // Mouse move for additional parallax on desktop
-    if (!isMobile()) {
-        document.addEventListener('mousemove', (e) => {
-            if (!this.isEnabled) return;
-            if (!this.deskScene.classList.contains('visible')) return;
-
-            this.handleMove(e.clientX, e.clientY);
-        });
-
-        // Touch move for tablet/mobile parallax
-        document.addEventListener('touchmove', (e) => {
-            if (!this.isEnabled) return;
-            if (!this.deskScene.classList.contains('visible')) return;
-
-            const touch = e.touches[0];
-            this.handleMove(touch.clientX, touch.clientY);
-        });
-    }
-
-    // Recalculate center on resize
-    window.addEventListener('resize', () => {
-        this.centerX = window.innerWidth / 2;
-        this.centerY = window.innerHeight / 2;
-    });
+    // Disabled for scroll-linked navigation
 },
 
 handleScroll() {
-    const scrollY = window.pageYOffset || document.documentElement.scrollTop;
-
-    this.layers.forEach(layer => {
-        const depth = parseFloat(layer.dataset.depth);
-        // Parallax based on scroll - layers move at different speeds
-        const scrollMove = scrollY * depth * 0.5;
-
-        gsap.to(layer, {
-            y: -scrollMove,
-            duration: 0.3,
-            ease: 'power1.out',
-            overwrite: 'auto'
-        });
-    });
+    // Disabled for scroll-linked navigation
 },
 
 handleMove(x, y) {
-    const deltaX = (x - this.centerX) / this.centerX;
-    const deltaY = (y - this.centerY) / this.centerY;
-
-    this.layers.forEach(layer => {
-        const depth = parseFloat(layer.dataset.depth);
-        const moveX = deltaX * 30 * depth;
-        const moveY = deltaY * 20 * depth;
-
-        gsap.to(layer, {
-            x: moveX,
-            duration: 0.5,
-            ease: 'power2.out',
-            overwrite: false
-        });
-    });
+    // Disabled for scroll-linked navigation
 },
 
 disable() {
@@ -447,11 +392,64 @@ this.sectionContent = document.getElementById('section-content');
 this.backButton = document.getElementById('back-to-desk');
 this.deskScene = document.getElementById('desk-scene');
 this.mainNav = document.getElementById('main-nav');
+this.contentSections = document.querySelectorAll('.content-section');
+this.isScrolling = false;
 
+    this.setupScrollTracking();
     this.setupObjectClicks();
     this.setupBackButton();
     this.setupNavLinks();
     this.setupDogInteraction();
+},
+
+setupScrollTracking() {
+    // Track scroll and update active symbol
+    window.addEventListener('scroll', () => {
+        if (!this.deskScene.classList.contains('visible')) return;
+
+        this.updateActiveSymbol();
+    });
+
+    // Initial check
+    setTimeout(() => this.updateActiveSymbol(), 100);
+},
+
+updateActiveSymbol() {
+    const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+    const viewportCenter = scrollY + (window.innerHeight / 3); // Check upper third of viewport
+
+    let activeSection = null;
+    let minDistance = Infinity;
+
+    // Find which section is closest to the top of viewport
+    this.contentSections.forEach(section => {
+        const rect = section.getBoundingClientRect();
+        const sectionTop = scrollY + rect.top;
+        const sectionBottom = sectionTop + rect.height;
+        const sectionCenter = sectionTop + (rect.height / 2);
+
+        // Calculate distance from viewport center to section center
+        const distance = Math.abs(viewportCenter - sectionCenter);
+
+        // Check if section is in viewport and closer than previous
+        if (distance < minDistance && rect.top < window.innerHeight && rect.bottom > 0) {
+            minDistance = distance;
+            activeSection = section;
+        }
+    });
+
+    // Update active class on symbols
+    if (activeSection) {
+        const sectionName = activeSection.dataset.section;
+
+        this.objects.forEach(obj => {
+            if (obj.dataset.section === sectionName) {
+                obj.classList.add('active');
+            } else {
+                obj.classList.remove('active');
+            }
+        });
+    }
 },
 
 revealObjects() {
@@ -490,8 +488,8 @@ revealObjects() {
 setupObjectClicks() {
     this.objects.forEach(obj => {
         const clickHandler = () => {
-            const section = obj.dataset.section;
-            this.openSection(section, obj);
+            const sectionName = obj.dataset.section;
+            this.scrollToSection(sectionName);
         };
 
         obj.addEventListener('click', clickHandler);
@@ -502,14 +500,33 @@ setupObjectClicks() {
     });
 },
 
+scrollToSection(sectionName) {
+    const targetSection = document.querySelector(`.content-section[data-section="${sectionName}"]`);
+    if (!targetSection) return;
+
+    // Smooth scroll to section
+    this.isScrolling = true;
+
+    const targetY = targetSection.offsetTop;
+
+    window.scrollTo({
+        top: targetY,
+        behavior: 'smooth'
+    });
+
+    // Reset scrolling flag after animation
+    setTimeout(() => {
+        this.isScrolling = false;
+    }, 1000);
+},
+
 setupNavLinks() {
     const navLinks = document.querySelectorAll('#main-nav a');
     navLinks.forEach(link => {
         const linkHandler = (e) => {
             e.preventDefault();
-            const section = link.getAttribute('href').replace('#', '');
-            const obj = document.querySelector(`[data-section="${section}"]`);
-            this.openSection(section, obj);
+            const sectionName = link.getAttribute('href').replace('#', '');
+            this.scrollToSection(sectionName);
         };
 
         link.addEventListener('click', linkHandler);
